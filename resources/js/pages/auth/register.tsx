@@ -52,10 +52,10 @@ export default function Register() {
                 const res = response.data as APIResponse
 
                 if (res.status === 'success') {
-                    toast(res.message, {
-                        onAutoClose: () => router.visit(route('view.login')),
-                        onDismiss: () => router.visit(route('view.login'))
-                    })
+                    toast(res.message)
+                    setTimeout(() => {
+                        router.visit(route('login'))
+                    }, 2500)
                 } else {
                     console.warn(res.message, res.data)
                     toast(res.message)
@@ -85,7 +85,7 @@ export default function Register() {
             <div className="flex flex-col gap-6">
 
                 <Card>
-                    <CardHeader className="text-center">
+                    <CardHeader className="text-center mb-4">
                         <CardTitle className="text-xl">Form Registrasi</CardTitle>
                         <CardDescription>
                             Input data sesuai form untuk melanjutkan pendaftaran.
@@ -125,7 +125,7 @@ export default function Register() {
                                     </FormItem>
                                 )} />
                                 <FormField control={form.control} name="password_confirmation" render={({ field }) => (
-                                    <FormItem className="grid gap-3 mb-8">
+                                    <FormItem className="grid gap-3 mb-12">
                                         <FormLabel htmlFor="password_confirmation">Konfirmasi Password</FormLabel>
                                         <FormControl>
                                             <Input id="password_confirmation" type="password" placeholder="********" autoComplete="new-password" required {...field} />

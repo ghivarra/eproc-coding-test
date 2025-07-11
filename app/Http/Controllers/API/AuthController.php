@@ -14,6 +14,20 @@ use Laravel\Sanctum\PersonalAccessToken;
 
 class AuthController extends Controller
 {
+    public function check(): JsonResponse
+    {
+        $user = auth('sanctum')->user();
+
+        // return response
+        return response()->json([
+            'status'  => is_null($user) ? 'error' : 'success',
+            'message' => is_null($user) ? 'Anda Belum Terotorisasi' : 'Otorisasi berhasil',
+            'data'    => $user,
+        ], 200);
+    }
+
+    //===========================================================================================
+
     public function login(Request $request): JsonResponse
     {
         $validation = Validator::make($request->all(), [

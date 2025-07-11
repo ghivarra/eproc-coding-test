@@ -5,7 +5,6 @@ use App\Http\Controllers\API\CatalogController;
 use App\Http\Controllers\API\FieldController;
 use App\Http\Controllers\API\SubfieldController;
 use App\Http\Controllers\API\VendorController;
-use App\Http\Middleware\VerifyAccessToken;
 use Illuminate\Support\Facades\Route;
 
 
@@ -13,6 +12,9 @@ use Illuminate\Support\Facades\Route;
 Route::post('/register', [AuthController::class, 'register'])->name('api.register');
 Route::post('/login', [AuthController::class, 'login'])->name('api.login');
 Route::post('/logout', [AuthController::class, 'logout'])->name('api.logout');
+
+// check authorization
+Route::get('/auth-check', [AuthController::class, 'check'])->name('api.auth.check');
 
 // auth
 Route::middleware('auth:sanctum')->group(function() {
