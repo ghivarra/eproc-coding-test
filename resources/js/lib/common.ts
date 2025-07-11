@@ -1,9 +1,15 @@
+import { router } from "@inertiajs/react"
 import axios from "axios"
+
+const deleteCookie = (name: string) => {
+    setCookie(name, '', 0)
+}
 
 const setCookie = (name: string, value: string, expHours: number) => {
     // set expiring time
     const date = new Date()
-    date.setTime(date.getTime() + (expHours*60*60*1000))
+    const addedTime = (expHours === 0) ? -1 : (expHours*60*60*1000)
+    date.setTime(date.getTime() + addedTime)
     const expires = "expires=" + date.toUTCString()
 
     // build string
@@ -31,7 +37,7 @@ const getCookie = (name: string): string => {
   return "";
 }
 
-const ajax = () => {
+const fetchApi = () => {
     const token = getCookie('access_token')
     return axios.create({
         headers: {
@@ -50,5 +56,10 @@ const checkAccess = () => {
     })
 }
 
+const logout = () => {
+    deleteCookie('access_token')
+    router.visit(route('home'))
+}
 
-export { setCookie, getCookie, checkAccess, ajax }
+
+export { deleteCookie, setCookie, getCookie, checkAccess, fetchApi, logout }

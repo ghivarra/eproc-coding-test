@@ -3,6 +3,6 @@ import Icons from '@/lib/icons'
 
 type IconName = keyof typeof Icons
 
-export function GetIcon(name: IconName) {
+export function DynamicIcon(name: IconName) {
     return Icons[name] as LucideIcon
 }
