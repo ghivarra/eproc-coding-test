@@ -274,12 +274,13 @@ class CatalogController extends Controller
 
     //================================================================================================
 
-    public function index(Request $request)
+    public function index(Request $request): JsonResponse
     {
         // simple query/forms
         // validasi
         $validation = Validator::make($request->all(), [
             'query'  => ['sometimes'],
+            'vendor' => ['sometimes', 'exists:vendors,id'],
             'limit'  => ['required', 'numeric', 'max:20'],
             'offset' => ['required', 'numeric']
         ]);
@@ -327,6 +328,11 @@ class CatalogController extends Controller
         // validasi
         $orm = Catalog::select($selectedFields)
                       ->join('vendors', 'vendor_id', '=', 'vendors.id');
+
+        if (!empty($input['vendor']))
+        {
+            $orm = $orm->where('catalogs.vendor_id', $input['vendor']);
+        }
 
         if (!empty($input['query']))
         {

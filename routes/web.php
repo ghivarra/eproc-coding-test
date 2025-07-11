@@ -17,6 +17,12 @@ Route::prefix('panel')->group(function() {
     // dasbor
     Route::get('dashboard')->name('panel.dashboard');
 
+    // vendor
+    Route::get('vendor')->name('panel.vendor');
+    Route::get('vendor/catalog')->name('panel.vendor.catalog');
+
+    // catalogs
+    Route::get('catalog')->name('panel.catalog');
 });
 
 // require_once __DIR__ . '/auth.php';

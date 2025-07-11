@@ -145,7 +145,7 @@ class VendorController extends Controller
 
     //================================================================================================
 
-    public function index(Request $request)
+    public function index(Request $request): JsonResponse
     {
         // simple query/forms
         // validasi
