@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Field extends Model
+class Vendor extends Model
 {
     use SoftDeletes;
 
@@ -14,7 +14,7 @@ class Field extends Model
      *
      * @var string
      */
-    protected $table = 'fields';
+    protected $table = 'vendors';
 
      /**
      * The primary key associated with the table.
