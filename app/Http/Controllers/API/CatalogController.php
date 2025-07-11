@@ -157,28 +157,35 @@ class CatalogController extends Controller
         $id = $request->input('id');
 
         // validasi
-        $catalog = Vendor::find($id);
+        $catalog = Catalog::find($id);
 
         // if not found
-        if (!isset($catalog->name))
+        if (!isset($catalog->title))
         {
             // id not valid
             return response()->json([
                 'status'  => 'error',
-                'message' => 'Gagal menghapus vendor, ID tidak valid',
+                'message' => 'Gagal menghapus katalog, ID tidak valid',
             ], 422);
+        }
+
+        // validasi vendor dan user
+        if (!$this->validateVendorAndUser($catalog->vendor_id))
+        {
+            // return error response
+            return response()->json([
+                'status'  => 'error',
+                'message' => "Anda tidak memiliki izin untuk menghapus katalog milik vendor {$this->usedVendor->name}",
+            ], 403);
         }
 
         // delete
         $catalog->delete();
 
-        // delete all catalogs from vendor too
-        Catalog::where('vendor_id', $id)->delete();
-
         // send response
         return response()->json([
             'status'  => 'success',
-            'message' => "Vendor {$catalog->name} berhasil dihapus"
+            'message' => "Katalog {$catalog->title} berhasil dihapus"
         ], 200);
     }
 
@@ -341,7 +348,7 @@ class CatalogController extends Controller
             // return error response
             return response()->json([
                 'status'  => 'error',
-                'message' => "Anda tidak memiliki izin untuk menambahkan katalog di vendor {$this->usedVendor->name}",
+                'message' => "Anda tidak memiliki izin untuk menambahkan katalog milik vendor {$this->usedVendor->name}",
             ], 403);
         }
 
