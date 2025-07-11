@@ -21,6 +21,11 @@ class AuthController extends Controller
             'password'  => ['required', 'string'],
         ]);
 
+        $validation->setAttributeNames([
+            'email'    => 'Email',
+            'password' => 'Kata Sandi'
+        ]);
+
         // check if error
         if ($validation->fails())
         {
@@ -101,13 +106,20 @@ class AuthController extends Controller
             'password'  => ['required', 'confirmed', Password::min(10)->letters()->mixedCase()->numbers()->symbols()],
         ]);
 
+        // set name
+        $validation->setAttributeNames([
+            'name'     => 'Nama',
+            'email'    => 'Email',
+            'password' => 'Kata Sandi'
+        ]);
+
         // check if error
         if ($validation->fails())
         {
             // return error response
             return response()->json([
                 'status'  => 'error',
-                'message' => 'Akun email dan password tidak cocok',
+                'message' => 'Gagal membuat akun pengguna',
                 'data'    => [
                     'errors' => $validation->errors()
                 ]
