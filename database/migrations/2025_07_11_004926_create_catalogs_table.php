@@ -45,7 +45,7 @@ return new class extends Migration
             $table->string('number', 255);
             $table->string('method', 500);
             $table->string('location', 500);
-            $table->string('qualification', 255);
+            $table->string('qualification', 1000);
             $table->integer('value')->unsigned();
             $table->bigInteger('vendor_id')->unsigned()->index();
             $table->bigInteger('field_id')->unsigned()->index();
