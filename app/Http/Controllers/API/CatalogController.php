@@ -4,9 +4,9 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use App\Models\Catalog;
+use App\Models\CatalogFieldSubfield;
 use App\Models\Subfield;
 use App\Models\Vendor;
-use Illuminate\Database\Query\JoinClause;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -43,8 +43,7 @@ class CatalogController extends Controller
             'qualification' => ['sometimes', 'max:1000'],
             'value'         => ['required', 'numeric'],
             'vendor_id'     => ['required',  'exists:vendors,id'],
-            'field_id'      => ['required',  'exists:fields,id'],
-            'subfield_id'   => ['required',  'exists:subfields,id'],
+            'subfields.*'   => ['required',  'exists:subfields,id'],
             'description'   => ['sometimes'],
 
             'register_date_start'      => ['required', 'date'],
@@ -62,8 +61,7 @@ class CatalogController extends Controller
             'qualification'            => 'Kualifikasi Penyedia Barang/Jasa',
             'value'                    => 'Nilai HPS',
             'vendor_id'                => 'Vendor',
-            'field_id'                 => 'Bidang Usaha',
-            'subfield_id'              => 'Sub Bidang Usaha',
+            'subfields.*'              => 'Sub Bidang Usaha',
             'description'              => 'Keterangan',
             'register_date_start'      => 'Jadwal Mulai Pendaftaran',
             'register_date_end'        => 'Jadwal Pendaftaran Selesai',
@@ -79,22 +77,6 @@ class CatalogController extends Controller
                 'status'  => 'error',
                 'message' => "Anda tidak memiliki izin untuk menambahkan katalog di vendor {$this->usedVendor->name}",
             ], 403);
-        }
-
-        // check sub-bidang dan bidang
-        $fieldID       = $request->input('field_id');
-        $subfieldID    = $request->input('subfield_id');
-        $subfieldExist = Subfield::where('id', $subfieldID)
-                                 ->where('field_id', $fieldID)
-                                 ->first();
-
-        if (empty($subfieldExist))
-        {
-            // return error response
-            return response()->json([
-                'status'  => 'error',
-                'message' => "Sub Bidang Usaha tidak sesuai dengan Bidang Usaha yang diinput",
-            ], 422);
         }
 
         // check if error
@@ -123,8 +105,6 @@ class CatalogController extends Controller
         $catalog->qualification = $input['qualification'];
         $catalog->value = $input['value'];
         $catalog->vendor_id = $input['vendor_id'];
-        $catalog->field_id = $input['field_id'];
-        $catalog->subfield_id = $input['subfield_id'];
         $catalog->description = $input['description'];
         $catalog->register_date_start = date('Y-m-d H:i:s', strtotime($input['register_date_start']));
         $catalog->register_date_end = date('Y-m-d H:i:s', strtotime($input['register_date_end']));
@@ -141,6 +121,27 @@ class CatalogController extends Controller
                 'status'  => 'error',
                 'message' => 'Server sedang sibuk, silahkan coba lagi',
             ], 503);
+        }
+
+        // save fields and subfields
+        $subfields = Subfield::select('id', 'field_id')->whereIn('id', $input['subfields'])->get();
+
+        if (!empty($subfields))
+        {
+            $insertData = [];
+
+            foreach ($subfields as $sub):
+
+                array_push($insertData, [
+                    'catalog_id'  => $catalog->id,
+                    'field_id'    => $sub->field_id,
+                    'subfield_id' => $sub->id,
+                ]);
+
+            endforeach;
+
+            // insert
+            CatalogFieldSubfield::insert($insertData);
         }
 
         // send response
@@ -180,6 +181,9 @@ class CatalogController extends Controller
             ], 403);
         }
 
+        // delete the subfields and field first
+        CatalogFieldSubfield::where('catalog_id', $catalog->id)->delete();
+
         // delete
         $catalog->delete();
 
@@ -208,10 +212,6 @@ class CatalogController extends Controller
             'catalogs.value',
             'catalogs.vendor_id',
             'vendors.name as vendor_name',
-            'catalogs.field_id',
-            'fields.name as field_name',
-            'catalogs.subfield_id',
-            'subfields.name as subfield_name',
             'catalogs.description',
             'catalogs.register_date_start',
             'catalogs.register_date_end',
@@ -224,8 +224,6 @@ class CatalogController extends Controller
         // validasi
         $catalog = Catalog::select($selectedFields)
                           ->join('vendors', 'vendor_id', '=', 'vendors.id')
-                          ->join('fields', 'field_id', '=', 'fields.id')
-                          ->join('subfields', 'subfield_id', '=', 'subfields.id')
                           ->where('catalogs.id', $id)
                           ->first();
 
@@ -237,6 +235,32 @@ class CatalogController extends Controller
                 'status'  => 'error',
                 'message' => 'Gagal menarik data catalog, ID tidak valid',
             ], 422);
+        }
+
+        // get fields and subfields collection
+        $catalog = $catalog->toArray();
+        $catalog['subfields_collection'] = [];
+
+        $selectedFields = [
+            'catalogs_fields_subfields.field_id', 
+            'fields.name as field_name', 
+            'subfield_id',
+            'subfields.name as subfield_name',
+        ];
+
+        $subfields = CatalogFieldSubfield::select($selectedFields)
+                                         ->where('catalog_id', $catalog['id'])
+                                         ->join('fields', 'catalogs_fields_subfields.field_id', '=', 'fields.id')
+                                         ->join('subfields', 'subfield_id', '=', 'subfields.id')
+                                         ->get();
+
+        if (!empty($subfields))
+        {
+            foreach ($subfields as $item):
+
+                array_push($catalog['subfields_collection'], $item);
+
+            endforeach;
         }
 
         // send response
@@ -373,8 +397,7 @@ class CatalogController extends Controller
             'location'      => ['required', 'max:500'],
             'qualification' => ['sometimes', 'max:1000'],
             'value'         => ['required', 'numeric'],
-            'field_id'      => ['required',  'exists:fields,id'],
-            'subfield_id'   => ['required',  'exists:subfields,id'],
+            'subfields.*'   => ['required',  'exists:subfields,id'],
             'description'   => ['sometimes'],
 
             'register_date_start'      => ['required', 'date'],
@@ -391,8 +414,7 @@ class CatalogController extends Controller
             'location'                 => 'Lokasi Pekerjaan',
             'qualification'            => 'Kualifikasi Penyedia Barang/Jasa',
             'value'                    => 'Nilai HPS',
-            'field_id'                 => 'Bidang Usaha',
-            'subfield_id'              => 'Sub Bidang Usaha',
+            'subfields.*'              => 'Sub Bidang Usaha',
             'description'              => 'Keterangan',
             'register_date_start'      => 'Jadwal Mulai Pendaftaran',
             'register_date_end'        => 'Jadwal Pendaftaran Selesai',
@@ -408,22 +430,6 @@ class CatalogController extends Controller
                 'status'  => 'error',
                 'message' => "Anda tidak memiliki izin untuk menambahkan katalog milik vendor {$this->usedVendor->name}",
             ], 403);
-        }
-
-        // check sub-bidang dan bidang
-        $fieldID       = $request->input('field_id');
-        $subfieldID    = $request->input('subfield_id');
-        $subfieldExist = Subfield::where('id', $subfieldID)
-                                 ->where('field_id', $fieldID)
-                                 ->first();
-
-        if (empty($subfieldExist))
-        {
-            // return error response
-            return response()->json([
-                'status'  => 'error',
-                'message' => "Sub Bidang Usaha tidak sesuai dengan Bidang Usaha yang diinput",
-            ], 422);
         }
 
         // check if error
@@ -449,8 +455,6 @@ class CatalogController extends Controller
         $catalog->location = $input['location'];
         $catalog->qualification = $input['qualification'];
         $catalog->value = $input['value'];
-        $catalog->field_id = $input['field_id'];
-        $catalog->subfield_id = $input['subfield_id'];
         $catalog->description = $input['description'];
         $catalog->register_date_start = date('Y-m-d H:i:s', strtotime($input['register_date_start']));
         $catalog->register_date_end = date('Y-m-d H:i:s', strtotime($input['register_date_end']));
@@ -467,6 +471,30 @@ class CatalogController extends Controller
                 'status'  => 'error',
                 'message' => 'Server sedang sibuk, silahkan coba lagi',
             ], 503);
+        }
+
+        // reset and re-insert subfields
+        CatalogFieldSubfield::where('catalog_id', $catalog->id)->delete();
+
+        // get new subfields
+        $subfields = Subfield::select('id', 'field_id')->whereIn('id', $input['subfields'])->get();
+
+        if (!empty($subfields))
+        {
+            $insertData = [];
+
+            foreach ($subfields as $sub):
+
+                array_push($insertData, [
+                    'catalog_id'  => $catalog->id,
+                    'field_id'    => $sub->field_id,
+                    'subfield_id' => $sub->id,
+                ]);
+
+            endforeach;
+
+            // insert
+            CatalogFieldSubfield::insert($insertData);
         }
 
         // send response

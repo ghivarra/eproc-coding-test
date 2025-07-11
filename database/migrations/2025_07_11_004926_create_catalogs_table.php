@@ -48,8 +48,6 @@ return new class extends Migration
             $table->string('qualification', 1000);
             $table->integer('value')->unsigned();
             $table->bigInteger('vendor_id')->unsigned()->index();
-            $table->bigInteger('field_id')->unsigned()->index();
-            $table->bigInteger('subfield_id')->unsigned()->index();
             $table->text('description');
             $table->datetime('register_date_start');
             $table->datetime('register_date_end');
@@ -60,6 +58,16 @@ return new class extends Migration
 
             // assign foreign key
             $table->foreign('vendor_id')->references('id')->on('vendors')->restrictOnDelete()->cascadeOnUpdate();
+        });
+
+        Schema::create('catalogs_fields_subfields', function(Blueprint $table) {
+            $table->id();
+            $table->bigInteger('catalog_id')->unsigned()->index();
+            $table->bigInteger('field_id')->unsigned()->index();
+            $table->bigInteger('subfield_id')->unsigned()->index();
+
+            // assign foreign key
+            $table->foreign('catalog_id')->references('id')->on('catalogs')->restrictOnDelete()->cascadeOnUpdate();
             $table->foreign('field_id')->references('id')->on('fields')->restrictOnDelete()->cascadeOnUpdate();
             $table->foreign('subfield_id')->references('id')->on('subfields')->restrictOnDelete()->cascadeOnUpdate();
         });
@@ -71,9 +79,13 @@ return new class extends Migration
     public function down(): void
     {
         // drop foreign keys first then table
+        Schema::table('catalogs_fields_subfields', function(Blueprint $table) {
+            $table->dropForeign('catalogs_fields_subfields_catalog_id_foreign');
+            $table->dropForeign('catalogs_fields_subfields_field_id_foreign');
+            $table->dropForeign('catalogs_fields_subfields_subfield_id_foreign');
+        });
+
         Schema::table('catalogs', function (Blueprint $table) {
-            $table->dropForeign("catalogs_vendor_id_foreign");
-            $table->dropForeign("catalogs_field_id_foreign");
             $table->dropForeign("catalogs_subfield_id_foreign");
         });
 
@@ -86,6 +98,7 @@ return new class extends Migration
         });       
 
         // drop tables
+        Schema::dropIfExists('catalogs_fields_subfields');
         Schema::dropIfExists('catalogs');
         Schema::dropIfExists('subfields');
         Schema::dropIfExists('fields');
