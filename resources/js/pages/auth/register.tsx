@@ -1,12 +1,6 @@
 import AuthLayout from "@/layouts/auth-layout"
 import { Button } from "@/components/ui/button"
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Link, router } from "@inertiajs/react"
 import { Head } from "@inertiajs/react"
@@ -15,16 +9,9 @@ import { APIResponse } from "@/types"
 import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form"
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { toast } from "sonner"
+import { checkAccess } from "@/lib/common"
 
 const FormSchema = z.object({
     fullName: z.string().min(1, { message: 'Nama wajib diisi' }),
@@ -37,6 +24,21 @@ const FormSchema = z.object({
 })
 
 export default function Register() {
+
+    // check access
+    checkAccess()
+        .then((response: AxiosResponse) => {
+            const res = response.data as APIResponse
+            if (res.status === 'success') {
+                router.visit(route('panel.dashboard'))
+            }
+        })
+        .catch((err) => {
+            console.log(err)
+            if (typeof err.response.data.message !== 'undefined') {
+                toast(err.response.data.message)
+            }
+        })
 
     const saveData = (data: z.infer<typeof FormSchema>) => {
         

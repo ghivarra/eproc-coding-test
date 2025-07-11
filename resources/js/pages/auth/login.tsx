@@ -26,6 +26,7 @@ import {
 } from "@/components/ui/form"
 import { toast } from "sonner"
 import { setCookie } from "@/lib/common"
+import { checkAccess } from "@/lib/common"
 
 const FormSchema = z.object({
     email: z.email({ message: 'Wajib Diisi' }),
@@ -33,6 +34,21 @@ const FormSchema = z.object({
 })
 
 export default function Register() {
+
+    // check access
+    checkAccess()
+        .then((response: AxiosResponse) => {
+            const res = response.data as APIResponse
+            if (res.status === 'success') {
+                router.visit(route('panel.dashboard'))
+            }
+        })
+        .catch((err) => {
+            console.log(err)
+            if (typeof err.response.data.message !== 'undefined') {
+                toast(err.response.data.message)
+            }
+        })
 
     const sendFormData = (data: z.infer<typeof FormSchema>) => {
         
@@ -74,7 +90,7 @@ export default function Register() {
             email: '',
             password: '',
         }
-    })    
+    })
 
     return (
         <AuthLayout title="E-Procurement">

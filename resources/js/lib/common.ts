@@ -1,3 +1,5 @@
+import axios from "axios"
+
 const setCookie = (name: string, value: string, expHours: number) => {
     // set expiring time
     const date = new Date()
@@ -29,5 +31,24 @@ const getCookie = (name: string): string => {
   return "";
 }
 
+const ajax = () => {
+    const token = getCookie('access_token')
+    return axios.create({
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    })
+}
 
-export { setCookie, getCookie }
+const checkAccess = () => {
+    const token = getCookie('access_token')
+
+    return axios.get(route('api.auth.check'), {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    })
+}
+
+
+export { setCookie, getCookie, checkAccess, ajax }
