@@ -56,6 +56,7 @@ class AuthController extends Controller
             'message' => 'Otorisasi berhasil',
             'data'    => [
                 'access_token' => $accessToken,
+                'user'         => $user,
             ]
         ], 200);
     }

@@ -5,11 +5,11 @@ use App\Http\Controllers\API\CatalogController;
 use App\Http\Controllers\API\FieldController;
 use App\Http\Controllers\API\SubfieldController;
 use App\Http\Controllers\API\VendorController;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 
 // authorization
+Route::post('/register', [AuthController::class, 'register'])->name('api.register');
 Route::post('/login', [AuthController::class, 'login'])->name('api.login');
 Route::post('/logout', [AuthController::class, 'logout'])->name('api.logout');
 
