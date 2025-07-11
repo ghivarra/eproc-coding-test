@@ -4,19 +4,17 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Support\Facades\Hash;
-use Laravel\Sanctum\HasApiTokens;
 
-class User extends Model
+class Field extends Model
 {
-    use HasApiTokens, SoftDeletes;
+    use SoftDeletes;
 
     /**
      * The table associated with the model.
      *
      * @var string
      */
-    protected $table = 'users';
+    protected $table = 'fields';
 
      /**
      * The primary key associated with the table.
@@ -53,8 +51,9 @@ class User extends Model
      */
     protected $fillable = [
         'name',
-        'email',
-        'password',
+        'website',
+        'founded_at',
+        'user_id',
     ];
 
     /**
@@ -63,12 +62,6 @@ class User extends Model
      * @var list<string>
      */
     protected $hidden = [
-        'password',
+        
     ];
-
-    // cast function
-    public function setPasswordAttribute(string $value)
-    {
-        $this->attributes['password'] = Hash::make($value);
-    }
 }
