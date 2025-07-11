@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Catalog;
 use App\Models\Subfield;
 use App\Models\Vendor;
+use Illuminate\Database\Query\JoinClause;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -195,19 +196,46 @@ class CatalogController extends Controller
     {
         $id = $request->input('id');
 
+        // field
+        $selectedFields = [
+            'catalogs.id',
+            'catalogs.uuid',
+            'catalogs.title',
+            'catalogs.number',
+            'catalogs.method',
+            'catalogs.location',
+            'catalogs.qualification',
+            'catalogs.value',
+            'catalogs.vendor_id',
+            'vendors.name as vendor_name',
+            'catalogs.field_id',
+            'fields.name as field_name',
+            'catalogs.subfield_id',
+            'subfields.name as subfield_name',
+            'catalogs.description',
+            'catalogs.register_date_start',
+            'catalogs.register_date_end',
+            'catalogs.documentation_date_start',
+            'catalogs.documentation_date_end',
+            'catalogs.created_at',
+            'catalogs.updated_at',
+        ];
+
         // validasi
-        $catalog = Vendor::select('vendors.id', 'vendors.name', 'website', 'founded_at', 'user_id', 'users.name as user_name')
-                        ->join('users', 'user_id', '=', 'users.id')
-                        ->where('vendors.id', $id)
-                        ->first();
+        $catalog = Catalog::select($selectedFields)
+                          ->join('vendors', 'vendor_id', '=', 'vendors.id')
+                          ->join('fields', 'field_id', '=', 'fields.id')
+                          ->join('subfields', 'subfield_id', '=', 'subfields.id')
+                          ->where('catalogs.id', $id)
+                          ->first();
 
         // if not found
-        if (!isset($catalog->name))
+        if (!isset($catalog->title))
         {
             // id not valid
             return response()->json([
                 'status'  => 'error',
-                'message' => 'Gagal menarik data vendor, ID tidak valid',
+                'message' => 'Gagal menarik data catalog, ID tidak valid',
             ], 422);
         }
 
@@ -248,23 +276,53 @@ class CatalogController extends Controller
         $input = $validation->validated();
 
         // find total
-        $totalData = Vendor::count();
+        $totalData = Catalog::count();
+
+        // field
+        $selectedFields = [
+            'catalogs.id',
+            'catalogs.uuid',
+            'catalogs.title',
+            'catalogs.number',
+            'catalogs.method',
+            'catalogs.location',
+            'catalogs.qualification',
+            'catalogs.value',
+            'catalogs.vendor_id',
+            'vendors.name as vendor_name',
+            'catalogs.field_id',
+            'fields.name as field_name',
+            'catalogs.subfield_id',
+            'subfields.name as subfield_name',
+            'catalogs.description',
+            'catalogs.register_date_start',
+            'catalogs.register_date_end',
+            'catalogs.documentation_date_start',
+            'catalogs.documentation_date_end',
+            'catalogs.created_at',
+            'catalogs.updated_at',
+        ];
 
         // validasi
-        $orm = Vendor::select('vendors.id', 'vendors.name', 'website', 'founded_at', 'user_id', 'users.name as user_name')
-                      ->join('users', 'user_id', '=', 'users.id');
+        $orm = Catalog::select($selectedFields)
+                      ->join('vendors', 'vendor_id', '=', 'vendors.id')
+                      ->join('fields', 'field_id', '=', 'fields.id')
+                      ->join('subfields', 'subfield_id', '=', 'subfields.id');
 
         if (!empty($input['query']))
         {
-            $orm = $orm->whereLike('vendors.name', "%{$input['query']}%", caseSensitive: false)
-                       ->orWhereLike('users.name', "%{$input['query']}%", caseSensitive: false);
+            $orm = $orm->whereLike('catalogs.title', "%{$input['query']}%", caseSensitive: false)
+                       ->orWhereLike('catalogs.number', "%{$input['query']}%", caseSensitive: false)
+                       ->orWhereLike('vendors.name', "%{$input['query']}%", caseSensitive: false)
+                       ->orWhereLike('fields.name', "%{$input['query']}%", caseSensitive: false)
+                       ->orWhereLike('subfields.name', "%{$input['query']}%", caseSensitive: false);
         }
 
         // get total filtered data
         $totalFilteredData = $orm->count();
 
         // get data
-        $data = $orm->orderBy('vendors.name', 'ASC')
+        $data = $orm->orderBy('catalogs.created_at', 'DESC')
                     ->limit($input['limit'])
                     ->offset($input['offset'])
                     ->get();
@@ -275,7 +333,7 @@ class CatalogController extends Controller
             // id not valid
             return response()->json([
                 'status'  => 'error',
-                'message' => 'Vendor tidak ditemukan',
+                'message' => 'Katalog tidak ditemukan',
                 'data'    => [],
             ], 200);
         }
