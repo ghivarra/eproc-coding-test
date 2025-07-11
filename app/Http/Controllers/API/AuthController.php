@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rules\Password;
+use Laravel\Sanctum\PersonalAccessToken;
 
 class AuthController extends Controller
 {
@@ -48,7 +49,7 @@ class AuthController extends Controller
 
         // get token
         // with one day expiration
-        $accessToken  = $user->createToken('acess-token', Carbon::now()->addDay(1))->plainTextToken;
+        $accessToken  = $user->createToken('acess-token',['*'], Carbon::now()->addDay(1))->plainTextToken;
 
         // return response
         return response()->json([
@@ -63,10 +64,25 @@ class AuthController extends Controller
 
     //===========================================================================================
 
-    public function logout(Request $request)
+    public function logout()
     {
         // revoke token
-        $request->user()->currentAccessToken()->delete();
+        $user = auth('sanctum')->user();
+
+        if (is_null($user))
+        {
+            // return error response
+            return response()->json([
+                'status'  => 'error',
+                'message' => 'Anda belum melakukan autentikasi login',
+            ], 401);
+        }
+
+        // revoke token
+        /** @var \App\Models\User|\Laravel\Sanctum\HasApiTokens $user */
+        /** @var \Laravel\Sanctum\PersonalAccessToken|null $token */
+        $token = $user->currentAccessToken();
+        $token?->delete();
 
         // return ok
         return response()->json([

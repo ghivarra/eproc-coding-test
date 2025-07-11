@@ -5,6 +5,7 @@ use App\Http\Controllers\API\CatalogController;
 use App\Http\Controllers\API\FieldController;
 use App\Http\Controllers\API\SubfieldController;
 use App\Http\Controllers\API\VendorController;
+use App\Http\Middleware\VerifyAccessToken;
 use Illuminate\Support\Facades\Route;
 
 
