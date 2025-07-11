@@ -242,6 +242,7 @@ class CatalogController extends Controller
         $catalog['subfields_collection'] = [];
 
         $selectedFields = [
+            'catalog_id',
             'catalogs_fields_subfields.field_id', 
             'fields.name as field_name', 
             'subfield_id',
@@ -314,10 +315,6 @@ class CatalogController extends Controller
             'catalogs.value',
             'catalogs.vendor_id',
             'vendors.name as vendor_name',
-            'catalogs.field_id',
-            'fields.name as field_name',
-            'catalogs.subfield_id',
-            'subfields.name as subfield_name',
             'catalogs.description',
             'catalogs.register_date_start',
             'catalogs.register_date_end',
@@ -329,17 +326,13 @@ class CatalogController extends Controller
 
         // validasi
         $orm = Catalog::select($selectedFields)
-                      ->join('vendors', 'vendor_id', '=', 'vendors.id')
-                      ->join('fields', 'field_id', '=', 'fields.id')
-                      ->join('subfields', 'subfield_id', '=', 'subfields.id');
+                      ->join('vendors', 'vendor_id', '=', 'vendors.id');
 
         if (!empty($input['query']))
         {
             $orm = $orm->whereLike('catalogs.title', "%{$input['query']}%", caseSensitive: false)
                        ->orWhereLike('catalogs.number', "%{$input['query']}%", caseSensitive: false)
-                       ->orWhereLike('vendors.name', "%{$input['query']}%", caseSensitive: false)
-                       ->orWhereLike('fields.name', "%{$input['query']}%", caseSensitive: false)
-                       ->orWhereLike('subfields.name', "%{$input['query']}%", caseSensitive: false);
+                       ->orWhereLike('vendors.name', "%{$input['query']}%", caseSensitive: false);
         }
 
         // get total filtered data
@@ -361,6 +354,49 @@ class CatalogController extends Controller
                 'data'    => [],
             ], 200);
         }
+
+        // data
+        $data = $data->toArray();
+
+        // get all
+        $dataIDS     = array_column($data, 'id');
+        $selectedCol = [
+            'catalog_id',
+            'catalogs_fields_subfields.field_id', 
+            'fields.name as field_name', 
+            'subfield_id',
+            'subfields.name as subfield_name',
+        ];
+
+        $subfields = CatalogFieldSubfield::select($selectedCol)
+                                         ->join('fields', 'catalogs_fields_subfields.field_id', '=', 'fields.id')
+                                         ->join('subfields', 'catalogs_fields_subfields.field_id', '=', 'subfields.id')
+                                         ->whereIn('catalog_id', $dataIDS)
+                                         ->get();
+
+        foreach ($data as $i => $item):
+
+            $data[$i]['subfields_collection'] = [];
+
+            if (empty($subfields))
+            {
+                continue;
+            }
+
+            foreach ($subfields as $n => $sub):
+
+                if ($sub->catalog_id === $item['id'])
+                {
+                    // push into collection
+                    array_push($data[$i]['subfields_collection'], $sub);
+
+                    // unset
+                    unset($subfields[$n]);
+                }
+
+            endforeach;
+
+        endforeach;
 
         // send response
         return response()->json([
