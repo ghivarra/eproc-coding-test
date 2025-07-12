@@ -49,7 +49,7 @@ const fetchApi = () => {
 const checkAccess = () => {
     const token = getCookie('access_token')
 
-    return axios.get(route('api.auth.check'), {
+    return axios.get(route('api.user'), {
         headers: {
             Authorization: `Bearer ${token}`
         }

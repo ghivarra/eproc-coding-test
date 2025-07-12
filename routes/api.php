@@ -14,7 +14,7 @@ Route::post('/login', [AuthController::class, 'login'])->name('api.login');
 Route::post('/logout', [AuthController::class, 'logout'])->name('api.logout');
 
 // check authorization
-Route::get('/auth-check', [AuthController::class, 'check'])->name('api.auth.check');
+Route::get('/user', [AuthController::class, 'user'])->name('api.user');
 
 // auth
 Route::middleware('auth:sanctum')->group(function() {

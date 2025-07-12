@@ -94,7 +94,7 @@ export default function Register() {
 
     return (
         <AuthLayout title="E-Procurement">
-            <Head title="Registrasi" />
+            <Head title="Login" />
             <div className="flex flex-col gap-6">
 
                 <Card>

@@ -56,7 +56,7 @@ export default function Register() {
                 if (res.status === 'success') {
                     toast(res.message)
                     setTimeout(() => {
-                        router.visit(route('login'))
+                        router.visit(route('view.login'))
                     }, 2500)
                 } else {
                     console.warn(res.message, res.data)
@@ -66,7 +66,20 @@ export default function Register() {
             .catch((err) => {
                 console.error(err)
                 if (typeof err.response.data.message !== 'undefined') {
-                    toast(err.response.data.message)
+                    const errors: string[] = []
+                    const errorResponse: {
+                        name?: string[],
+                        email?: string[],
+                        password?: string[],
+                    } = err.response.data.data.errors
+                    
+                    Object.values(errorResponse).forEach((value: string[]) => {
+                        value.forEach((item) => {
+                            errors.push(item)
+                        })
+                    })
+
+                    toast(err.response.data.message + '. ' + errors.join(' '))
                 }
             })
     }

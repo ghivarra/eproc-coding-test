@@ -14,7 +14,7 @@ use Laravel\Sanctum\PersonalAccessToken;
 
 class AuthController extends Controller
 {
-    public function check(): JsonResponse
+    public function user(): JsonResponse
     {
         $user = auth('sanctum')->user();
 
