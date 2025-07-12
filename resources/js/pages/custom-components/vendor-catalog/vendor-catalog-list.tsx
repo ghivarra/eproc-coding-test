@@ -121,21 +121,19 @@ export default function VendorCatalogList({ vendorID, subfields }: { vendorID: n
                     <TableRow className="bg-secondary">
                         <TableHead></TableHead>
                         <TableHead>Data</TableHead>
-                        <TableHead>Vendor</TableHead>
                         <TableHead>Kualifikasi</TableHead>
                         <TableHead className="text-right">Nilai</TableHead>
                     </TableRow>
                 </TableHeader>
                 <TableBody>
                     {catalogs && catalogs.map(catalog => (
-                        <VendorCatalogListItem key={catalog.id} props={catalog} />
+                        <VendorCatalogListItem key={catalog.id} props={catalog} subfields={subfields} refreshData={fetchCatalogData} />
                     ))}
                 </TableBody>
                 <TableFooter>
                     <TableRow className="bg-secondary">
                         <TableHead></TableHead>
                         <TableHead>Data</TableHead>
-                        <TableHead>Vendor</TableHead>
                         <TableHead>Kualifikasi</TableHead>
                         <TableHead className="text-right">Nilai</TableHead>
                     </TableRow>

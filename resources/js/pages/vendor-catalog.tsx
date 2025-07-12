@@ -55,7 +55,7 @@ export default function VendorCatalog() {
     const [ subfields, setSubfields ] = useState<SubfieldSelectType[]>([])
 
     // fetch subfields
-    const fetchSubfields = useCallback(() => {
+    const fetchSubfields = () => {
         const axios = fetchApi()
         axios.get(route('api.subfield'), {
             params: {
@@ -90,13 +90,13 @@ export default function VendorCatalog() {
                 processError({ err: [] }, err.response.data.message)
             }
         })
-    }, [])
+    }
 
     // use effect
     useEffect(() => {
         fetchVendorData()
         fetchSubfields()
-    }, [fetchVendorData, fetchSubfields])
+    }, [fetchVendorData])
 
     return (
         <main>

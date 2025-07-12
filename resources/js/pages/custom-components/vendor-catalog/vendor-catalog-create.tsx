@@ -7,6 +7,7 @@ import { Save } from "lucide-react"
 import VendorCatalogSearchForm from "./vendor-catalog-search-form"
 import VendorCatalogCreateForm from "./vendor-catalog-create-form"
 import { SubfieldSelectType } from "@/types"
+import { Separator } from "@radix-ui/react-separator"
 
 interface VendorCatalogCreateType {
     refreshData: () => void, 
@@ -32,13 +33,14 @@ export default function VendorCatalogCreate({ refreshData, subfields, vendorID }
                 </DialogTrigger>
                 <VendorCatalogSearchForm refreshData={refreshData}></VendorCatalogSearchForm>
             </div>
-            <DialogContent className="sm:max-w-[425px] overflow-auto max-h-[90dvh] p-4 flex flex-col">
-                <DialogHeader>
+            <DialogContent className="sm:max-w-[90dvw] md:max-w-[90dvw] md:w-[860px] overflow-auto max-h-[90dvh] p-4 flex flex-col">
+                <DialogHeader className="pt-4">
                     <DialogTitle>Tambah Katalog</DialogTitle>
                     <DialogDescription>
                         Anda bisa menambahkan katalog untuk vendor terkait di sini.
                     </DialogDescription>
                 </DialogHeader>
+                <Separator />
                 <VendorCatalogCreateForm vendorID={vendorID} subfields={subfields} dialogToggle={setIsDialogOpen} refreshData={refreshData}>
                     <DialogFooter className="max-w-full">
                         <Button type="submit" className="w-full mb-4">

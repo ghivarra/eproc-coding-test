@@ -90,8 +90,6 @@ interface CatalogItem {
     created_at: string,
     updated_at: string,
     method: string?,
-    documentation_date_start?: string,
-    documentation_date_end?: string,
     description?: string,
     subfields_collection?: SubfieldsCollection[]
 }
