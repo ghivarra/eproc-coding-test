@@ -28,9 +28,10 @@ export default function VendorCatalog() {
     const [ vendor, setVendor ] = useState<VendorItemType|undefined>(undefined)
 
     // fetch data
-    const fetchVendorData = useCallback(() => {
+    const fetchVendorData = useCallback((controller?: AbortController) => {
         const axios = fetchApi()
         axios.get(route('api.vendor.find'), {
+            signal: (typeof controller !== 'undefined') ? controller.signal : undefined,
             params: {
                 id: props.id
             }
@@ -55,9 +56,10 @@ export default function VendorCatalog() {
     const [ subfields, setSubfields ] = useState<SubfieldSelectType[]>([])
 
     // fetch subfields
-    const fetchSubfields = () => {
+    const fetchSubfields = (controller?: AbortController) => {
         const axios = fetchApi()
         axios.get(route('api.subfield'), {
+            signal: (typeof controller !== 'undefined') ? controller.signal : undefined,
             params: {
                 // no params
             }
@@ -94,8 +96,13 @@ export default function VendorCatalog() {
 
     // use effect
     useEffect(() => {
-        fetchVendorData()
-        fetchSubfields()
+        const controller = new AbortController()
+        fetchVendorData(controller)
+        fetchSubfields(controller)
+
+        return () => {
+            controller.abort()
+        }
     }, [fetchVendorData])
 
     return (

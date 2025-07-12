@@ -26,12 +26,13 @@ export default function VendorCatalogList({ vendorID, subfields }: { vendorID: n
     const limitPerPage = 10
     
     // data fetcher
-    const fetchCatalogData = useCallback((query?: string) => {
+    const fetchCatalogData = useCallback((query?: string, controller?: AbortController) => {
 
         const offsetValue = limitPerPage * (currentPage - 1)
 
         const axios = fetchApi()
         axios.get(route('api.catalog.index'), {
+            signal: (typeof controller !== 'undefined') ? controller.signal : undefined,
             params: {
                 vendor: vendorID,
                 query: (typeof query === 'undefined') ? '' : query,
@@ -107,7 +108,14 @@ export default function VendorCatalogList({ vendorID, subfields }: { vendorID: n
 
     // use effect
     useEffect(() => {
-        fetchCatalogData()
+        const controller = new AbortController()
+
+        fetchCatalogData('', controller)
+
+        return () => {
+            controller.abort()
+        }
+
     }, [fetchCatalogData])
 
     // render

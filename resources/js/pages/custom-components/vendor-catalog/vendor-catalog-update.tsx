@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Icon } from "@/components/icon"
 import { SquarePen } from "lucide-react"
-import { useEffect, useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 import { Save } from "lucide-react"
 import { APIResponse, CatalogItem, SubfieldSelectType } from "@/types"
 import { Separator } from "@radix-ui/react-separator"
@@ -23,14 +23,11 @@ export default function VendorCatalogUpdate({ refreshData, subfields, catalogID 
     const [ catalogData, setCatalogData ] = useState<CatalogItem|undefined>(undefined)
 
     // abort controller
-    const controller = new AbortController()
-    const signal = controller.signal
-
     // fetch data
-    const fetchCatalogData = () => {
+    const fetchCatalogData = useCallback((controller?: AbortController) => {
         const axios = fetchApi()
         axios.get(route('api.catalog.find'), {
-            signal: signal,
+            signal: (typeof controller !== 'undefined') ? controller.signal : undefined,
             params: {
                 id: catalogID,
             }
@@ -48,20 +45,22 @@ export default function VendorCatalogUpdate({ refreshData, subfields, catalogID 
                 processError({ err: [] }, err.response.data.message)
             }
         })
-    }
+    }, [catalogID])
 
     // use effect
     useEffect(() => {
 
-        if (isDialogOpen && (typeof catalogID !== 'undefined')) {
-            fetchCatalogData()
+        const controller = new AbortController()
+
+        if (isDialogOpen && (typeof catalogID !== 'undefined') && catalogData === undefined) {
+            fetchCatalogData(controller)
         }
 
         return () => {
             controller.abort()
         }
 
-    }, [isDialogOpen, catalogID])
+    }, [isDialogOpen, catalogID, fetchCatalogData, catalogData])
 
     // render
     return (

@@ -17,9 +17,10 @@ export default function VendorList() {
     const [ vendors, setVendors ] = useState<VendorListResponse|undefined>(undefined)
 
     // fetch data
-    const fetchVendorData = useCallback((query?: string) => {
+    const fetchVendorData = useCallback((query?: string, controller?: AbortController) => {
         const axios = fetchApi()
         axios.get(route('api.vendor.index'), {
+            signal: (typeof controller !== 'undefined') ? controller.signal : undefined,
             params: {
                 query: (typeof query === 'undefined') ? '' : query,
                 limit: 10,
@@ -43,7 +44,11 @@ export default function VendorList() {
 
     // use effect
     useEffect(() => {
-        fetchVendorData()
+        const controller = new AbortController()
+        fetchVendorData('', controller)
+        return () => {
+            controller.abort()
+        }
     }, [fetchVendorData])
     
     // process list
