@@ -100,6 +100,17 @@ class VendorController extends Controller
             ], 422);
         }
 
+        // validasi user
+        $user = auth('sanctum')->user();
+
+        if ($vendor->user_id !== $user->id)
+        {
+            return response()->json([
+                'status'  => 'error',
+                'message' => "Anda tidak memiliki izin untuk menghapus vendor {$vendor->name}",
+            ], 403);
+        }
+
         // delete
         $vendor->delete();
 
@@ -119,10 +130,14 @@ class VendorController extends Controller
     {
         $id = $request->input('id');
 
+        // validasi user
+        $user = auth('sanctum')->user();
+
         // validasi
         $vendor = Vendor::select('vendors.id', 'vendors.name', 'website', 'founded_at', 'user_id', 'users.name as user_name')
                         ->join('users', 'user_id', '=', 'users.id')
                         ->where('vendors.id', $id)
+                        ->where('vendors.user_id', $user->id)
                         ->first();
 
         // if not found
@@ -147,6 +162,9 @@ class VendorController extends Controller
 
     public function index(Request $request): JsonResponse
     {
+        // validasi user
+        $user = auth('sanctum')->user();
+
         // simple query/forms
         // validasi
         $validation = Validator::make($request->all(), [
@@ -176,7 +194,8 @@ class VendorController extends Controller
 
         // validasi
         $orm = Vendor::select('vendors.id', 'vendors.name', 'website', 'founded_at', 'user_id', 'users.name as user_name')
-                      ->join('users', 'user_id', '=', 'users.id');
+                      ->join('users', 'user_id', '=', 'users.id')
+                      ->where('vendors.user_id', $user->id);
 
         if (!empty($input['query']))
         {
@@ -267,6 +286,19 @@ class VendorController extends Controller
 
         // input vendor
         $vendor = Vendor::find($input['id']);
+
+        // validasi user
+        $user = auth('sanctum')->user();
+
+        if ($vendor->user_id !== $user->id)
+        {
+            return response()->json([
+                'status'  => 'error',
+                'message' => "Anda tidak memiliki izin untuk mengupdate data vendor {$vendor->name}",
+            ], 403);
+        }
+
+        // save
         $vendor->name = $input['name'];
         $vendor->website = $input['website'];
         $vendor->founded_at = $input['founded_at'];

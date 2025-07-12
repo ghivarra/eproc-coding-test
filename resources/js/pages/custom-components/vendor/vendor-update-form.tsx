@@ -55,13 +55,14 @@ export default function VendorUpdateForm({ children, dialogToggle, onUpdate, def
             .catch((err) => {
                 console.error(err)
                 if (typeof err.response.data.message !== 'undefined') {
-                    const errorResponse: {
-                        id?: string[],
-                        name?: string[],
-                        website?: string[],
-                        foundedAt?: string[],
-                    } = err.response.data.data.errors
-                    processError(errorResponse, err.response.data.message)
+                    if (typeof err.response.data.data !== 'undefined') {
+                        const errorResponse: {
+                            id?: string[],
+                        } = err.response.data.data.errors
+                        processError(errorResponse, err.response.data.message)
+                    } else {
+                        toast.error(err.response.data.message)
+                    }
                 } else {
                     toast.error(err.message)
                 }
