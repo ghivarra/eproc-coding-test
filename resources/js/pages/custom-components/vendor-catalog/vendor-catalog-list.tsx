@@ -154,7 +154,7 @@ export default function VendorCatalogList({ vendorID, subfields }: { vendorID: n
 
             { (filteredTotal !== currentTotal) && (
                 <div className="pt-4 text-gray-400">
-                    Menyaring {formatNumber(filteredTotal)} item dari total {formatNumber(currentTotal)} data
+                    Menyaring {formatNumber(filteredTotal)} item dari total {formatNumber(currentTotal)} katalog
                 </div>
             ) }
             

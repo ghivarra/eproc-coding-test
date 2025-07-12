@@ -72,7 +72,7 @@ export default function VendorCatalogListItem({ props, refreshData, subfields }:
                     </Button>
                 </TableCell>
                 <TableCell>
-                    <p className="font-bold pt-2 pb-3">{props.title}</p>
+                    <p className="font-bold pt-2 pb-3 whitespace-normal">{props.title}</p>
                     <div className="mb-2 flex items-center">
                         <VendorCatalogUpdate catalogID={props.id} refreshData={refreshData} subfields={subfields} />
                         <CustomAlertDialog {...deleteProps}>
@@ -83,8 +83,8 @@ export default function VendorCatalogListItem({ props, refreshData, subfields }:
                         </CustomAlertDialog>
                     </div>
                 </TableCell>
-                <TableCell className="max-w-[140px]">{props.qualification}</TableCell>
-                <TableCell className="max-w-[100px] text-right">{formatCurrency(props.value)}</TableCell>
+                <TableCell className="max-w-[140px] whitespace-normal">{props.qualification}</TableCell>
+                <TableCell className="max-w-[100px] whitespace-normal text-right">{formatCurrency(props.value)}</TableCell>
             </TableRow>
         </>
     )
