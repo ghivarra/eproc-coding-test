@@ -25,7 +25,6 @@ export default function CatalogDetailContent({ id }: { id: number }) {
             const res = response.data as APIResponse
             if (res.status === 'success') {
                 const data = res.data as CatalogItem
-                console.log(data)
                 setCatalog(data)
             } else {
                 toast.warning(res.message)
