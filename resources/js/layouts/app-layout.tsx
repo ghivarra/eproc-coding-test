@@ -1,17 +1,18 @@
 import AppSidebarLayout from './app/app-sidebar-layout';
-import { type BreadcrumbItem } from '@/types';
+import { User, type BreadcrumbItem } from '@/types';
 import type { ReactNode }  from 'react';
 import ProviderLayout from './provider-layout';
 
 interface AppLayoutProps {
-    children: ReactNode;
-    breadcrumbs?: BreadcrumbItem[];
+    children: ReactNode,
+    breadcrumbs?: BreadcrumbItem[],
+    updateUser: React.Dispatch<React.SetStateAction<User | null>>
 }
 
-export default function AppLayout({ children, breadcrumbs, ...props }: AppLayoutProps) {
+export default function AppLayout({ children, breadcrumbs, updateUser, ...props }: AppLayoutProps) {
 
     return (
-        <ProviderLayout>
+        <ProviderLayout updateUser={updateUser}>
             <AppSidebarLayout breadcrumbs={breadcrumbs} {...props}>
                 {children}
             </AppSidebarLayout>

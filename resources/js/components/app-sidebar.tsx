@@ -10,8 +10,8 @@ import useAuthorizedUser from '@/hooks/use-authorized-user';
 
 const mainNavItems: NavItem[] = [
     {
-        title: 'Dashboard',
-        href: '/dashboard',
+        title: 'Dasbor',
+        href: route('panel.dashboard'),
         icon: DynamicIcon('LayoutGrid'),
     },
 ];

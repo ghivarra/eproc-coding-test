@@ -6,10 +6,11 @@ import AuthorizedUserContext from "@/lib/auth-user-context"
 import { router } from "@inertiajs/react"
 
 interface ProviderLayoutProps {
-    children: ReactNode
+    children: ReactNode,
+    updateUser: React.Dispatch<React.SetStateAction<User | null>>
 }
 
-export default function ProviderLayout({ children }: ProviderLayoutProps) {
+export default function ProviderLayout({ children, updateUser }: ProviderLayoutProps) {
     const [ user, setUser ] = useState<User|null>(null)
 
     const fetchUserData = useCallback(async () => {
@@ -22,6 +23,7 @@ export default function ProviderLayout({ children }: ProviderLayoutProps) {
             if (res.status === 'success') {
                 const data = res.data as User
                 setUser(data)
+                updateUser(data)
             } else {
                 logout()
                 router.visit(route('view.login'))
@@ -32,7 +34,7 @@ export default function ProviderLayout({ children }: ProviderLayoutProps) {
             router.visit(route('view.login'))
         }
         
-    }, []) // empty dependency
+    }, [updateUser]) // empty dependency
 
     useEffect(() => {
         fetchUserData()
