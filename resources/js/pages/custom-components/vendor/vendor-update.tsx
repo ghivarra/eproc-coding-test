@@ -6,7 +6,7 @@ import { Save, SquarePen } from "lucide-react"
 import VendorUpdateForm from "./vendor-update-form"
 import { VendorItemType } from "@/types"
 
-export default function VendorUpdate({ defaultValue, onUpdate }: { defaultValue: VendorItemType, onUpdate: () => void }) {
+export default function VendorUpdate({ defaultValue, refreshData }: { defaultValue: VendorItemType, refreshData: () => void }) {
 
     const [ isDialogOpen, setIsDialogOpen ] = useState(false)
 
@@ -25,7 +25,7 @@ export default function VendorUpdate({ defaultValue, onUpdate }: { defaultValue:
                         Anda bisa merubah data vendor yang anda kelola di sini
                     </DialogDescription>
                 </DialogHeader>
-                <VendorUpdateForm defaultValue={defaultValue} dialogToggle={setIsDialogOpen} onUpdate={onUpdate}>
+                <VendorUpdateForm defaultValue={defaultValue} dialogToggle={setIsDialogOpen} refreshData={refreshData}>
                     <DialogFooter className="max-w-full">
                         <Button type="submit" className="w-full mb-4">
                             <Icon iconNode={Save} />

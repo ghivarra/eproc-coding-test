@@ -18,10 +18,10 @@ const VendorQuerySchema = z.object({
 type VendorCreateFormProps = {
     children: ReactNode,
     dialogToggle: React.Dispatch<React.SetStateAction<boolean>>,
-    onUpdate: () => void
+    refreshData: () => void
 }
 
-export default function VendorCreateForm({ children, dialogToggle, onUpdate }: VendorCreateFormProps) {
+export default function VendorCreateForm({ children, dialogToggle, refreshData }: VendorCreateFormProps) {
 
     const form = useForm<z.infer<typeof VendorQuerySchema>>({
         resolver: zodResolver(VendorQuerySchema),
@@ -46,7 +46,7 @@ export default function VendorCreateForm({ children, dialogToggle, onUpdate }: V
                 if (res.status === 'success') {
                     toast.success(`Vendor ${data.name} berhasil dibuat`)
                     dialogToggle(false)
-                    onUpdate()
+                    refreshData()
                 }
             })
             .catch((err) => {

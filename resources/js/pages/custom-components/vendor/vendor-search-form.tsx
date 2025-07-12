@@ -8,7 +8,7 @@ const VendorQuerySchema = z.object({
     vendorQuery: z.string()
 })
 
-export default function VendorSearch() {
+export default function VendorSearch({ refreshData }: { refreshData: (query?: string) => void }) {
 
     const form = useForm<z.infer<typeof VendorQuerySchema>>({
         resolver: zodResolver(VendorQuerySchema),
@@ -18,7 +18,7 @@ export default function VendorSearch() {
     })
 
     const searchData = (data: z.infer<typeof VendorQuerySchema>) => {
-        console.log(data)
+        refreshData(data.vendorQuery)
     }
 
     return (

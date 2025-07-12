@@ -10,7 +10,7 @@ import { fetchApi, processError } from "@/lib/common"
 import { AxiosResponse } from "axios"
 import { toast } from "sonner"
 
-export default function VendorItem({ props, onUpdate }: { props: VendorItemType, onUpdate: () => void }) {
+export default function VendorItem({ props, refreshData }: { props: VendorItemType, refreshData: () => void }) {
 
     const deleteAction = () => {
         const axios = fetchApi()
@@ -23,7 +23,7 @@ export default function VendorItem({ props, onUpdate }: { props: VendorItemType,
                 const res = response.data as APIResponse
                 if (res.status === 'success') {
                     toast.warning(`Vendor ${props.name} dan semua katalog yang diterbitkan vendor ini sudah dihapus`)
-                    onUpdate()
+                    refreshData()
                 }
             })
             .catch((err) => {
@@ -66,7 +66,7 @@ export default function VendorItem({ props, onUpdate }: { props: VendorItemType,
                 </CardAction>
             </CardHeader>
             <CardFooter>
-                <VendorUpdate defaultValue={props} onUpdate={onUpdate} />
+                <VendorUpdate defaultValue={props} refreshData={refreshData} />
                 <CustomAlertDialog {...deleteProps}>
                     <Button variant="link" className="text-red-600">
                         <Icon iconNode={Trash2} />

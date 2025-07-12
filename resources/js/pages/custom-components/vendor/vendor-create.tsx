@@ -7,7 +7,7 @@ import { useState } from "react"
 import { Save } from "lucide-react"
 import VendorCreateForm from "./vendor-create-form"
 
-export default function VendorCreate({ onUpdate }: { onUpdate: () => void }) {
+export default function VendorCreate({ refreshData }: { refreshData: () => void }) {
 
     const [ isDialogOpen, setIsDialogOpen ] = useState(false)
 
@@ -20,7 +20,7 @@ export default function VendorCreate({ onUpdate }: { onUpdate: () => void }) {
                         Tambah Vendor
                     </Button>
                 </DialogTrigger>
-                <VendorSearchForm />
+                <VendorSearchForm refreshData={refreshData} />
             </div>
             <DialogContent className="sm:max-w-[425px]">
                 <DialogHeader>
@@ -29,7 +29,7 @@ export default function VendorCreate({ onUpdate }: { onUpdate: () => void }) {
                         Anda bisa menambahkan vendor yang anda kelola di sini.
                     </DialogDescription>
                 </DialogHeader>
-                <VendorCreateForm dialogToggle={setIsDialogOpen} onUpdate={onUpdate}>
+                <VendorCreateForm dialogToggle={setIsDialogOpen} refreshData={refreshData}>
                     <DialogFooter className="max-w-full">
                         <Button type="submit" className="w-full mb-4">
                             <Icon iconNode={Save} />

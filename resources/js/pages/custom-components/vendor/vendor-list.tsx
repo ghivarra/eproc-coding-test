@@ -15,14 +15,13 @@ export default function VendorList() {
         data: VendorItemType[]
     }
     const [ vendors, setVendors ] = useState<VendorListResponse|undefined>(undefined)
-    const [ query ] = useState('')
 
     // fetch data
-    const fetchVendorData = useCallback(() => {
+    const fetchVendorData = useCallback((query?: string) => {
         const axios = fetchApi()
         axios.get(route('api.vendor.index'), {
             params: {
-                query: query,
+                query: (typeof query === 'undefined') ? '' : query,
                 limit: 10,
                 offset: 0
             }
@@ -40,7 +39,7 @@ export default function VendorList() {
                 processError({ err: [] }, err.response.data.message)
             }
         })
-    }, [query])
+    }, [])
 
     // use effect
     useEffect(() => {
@@ -58,7 +57,7 @@ export default function VendorList() {
         return (
             <div>
                 {data.map(vendor => (
-                    <VendorItem props={vendor} key={vendor.id} onUpdate={fetchVendorData} />
+                    <VendorItem props={vendor} key={vendor.id} refreshData={fetchVendorData} />
                 ))}
             </div>
         )
@@ -66,7 +65,7 @@ export default function VendorList() {
 
     return (
         <>
-            <VendorCreate onUpdate={fetchVendorData} />
+            <VendorCreate refreshData={fetchVendorData} />
             <RenderVendorItem />
         </>
     )
