@@ -55,3 +55,14 @@ export interface VendorItemType {
     user_id: number,
     user_name: string,
 }
+
+interface CustomAlertDialogProps {
+    children?: ReactNode,
+    callback: () => void,
+    title: string,
+    description: string,
+    cancelText: string,
+    cancelTextVariant: "link" | "default" | "destructive" | "outline" | "secondary" | "ghost" | null | undefined,
+    confirmText: string,
+    confirmTextVariant: "link" | "default" | "destructive" | "outline" | "secondary" | "ghost" | null | undefined,
+}
