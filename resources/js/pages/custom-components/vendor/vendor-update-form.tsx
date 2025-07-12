@@ -7,7 +7,7 @@ import { ReactNode } from "react"
 import { fetchApi, processError } from "@/lib/common"
 import { AxiosResponse } from "axios"
 import { toast } from "sonner"
-import { APIResponse } from "@/types"
+import { APIResponse, VendorItemType } from "@/types"
 
 const VendorQuerySchema = z.object({
     name: z.string().min(1, { message: 'Nama vendor harus diisi' }),
@@ -15,36 +15,39 @@ const VendorQuerySchema = z.object({
     foundedAt: z.string()
 })
 
-type VendorCreateFormProps = {
+type VendorUpdateFormProps = {
     children: ReactNode,
     dialogToggle: React.Dispatch<React.SetStateAction<boolean>>,
-    onUpdate: () => void
+    onUpdate: () => void,
+    defaultValue: VendorItemType
 }
 
-export default function VendorCreateForm({ children, dialogToggle, onUpdate }: VendorCreateFormProps) {
+export default function VendorUpdateForm({ children, dialogToggle, onUpdate, defaultValue }: VendorUpdateFormProps) {
 
     const form = useForm<z.infer<typeof VendorQuerySchema>>({
         resolver: zodResolver(VendorQuerySchema),
         defaultValues: {
-            name: '',
-            website: '',
-            foundedAt: '2000'
+            name: defaultValue.name,
+            website: defaultValue.website,
+            foundedAt: defaultValue.founded_at
         }
     })
 
     const sendFormData = (data: z.infer<typeof VendorQuerySchema>) => {
         
-        const input = new FormData()
-        input.append('name', data.name)
-        input.append('website', data.website)
-        input.append('founded_at', data.foundedAt)
+        const input = {
+            id: defaultValue.id.toString(),
+            name: data.name,
+            website: data.website,
+            founded_at: data.foundedAt,
+        }
         
         const axios = fetchApi()
-        axios.post(route('api.vendor.create'), input)
+        axios.patch(route('api.vendor.update'), input)
             .then((response: AxiosResponse) => {
                 const res = response.data as APIResponse
                 if (res.status === 'success') {
-                    toast.success(`Vendor ${data.name} berhasil dibuat`)
+                    toast.success(`Vendor ${data.name} berhasil diperbaharui`)
                     dialogToggle(false)
                     onUpdate()
                 }
@@ -53,6 +56,7 @@ export default function VendorCreateForm({ children, dialogToggle, onUpdate }: V
                 console.error(err)
                 if (typeof err.response.data.message !== 'undefined') {
                     const errorResponse: {
+                        id?: string[],
                         name?: string[],
                         website?: string[],
                         foundedAt?: string[],

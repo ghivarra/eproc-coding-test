@@ -3,9 +3,10 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Icon } from "@/components/icon"
 import { useState } from "react"
 import { Save, SquarePen } from "lucide-react"
-import VendorCreateForm from "./vendor-create-form"
+import VendorUpdateForm from "./vendor-update-form"
+import { VendorItemType } from "@/types"
 
-export default function VendorUpdate({ onUpdate }: { onUpdate: () => void }) {
+export default function VendorUpdate({ defaultValue, onUpdate }: { defaultValue: VendorItemType, onUpdate: () => void }) {
 
     const [ isDialogOpen, setIsDialogOpen ] = useState(false)
 
@@ -24,14 +25,14 @@ export default function VendorUpdate({ onUpdate }: { onUpdate: () => void }) {
                         Anda bisa merubah data vendor yang anda kelola di sini
                     </DialogDescription>
                 </DialogHeader>
-                <VendorCreateForm dialogToggle={setIsDialogOpen} onUpdate={onUpdate}>
+                <VendorUpdateForm defaultValue={defaultValue} dialogToggle={setIsDialogOpen} onUpdate={onUpdate}>
                     <DialogFooter className="max-w-full">
                         <Button type="submit" className="w-full mb-4">
                             <Icon iconNode={Save} />
-                            Simpan Data
+                            Simpan Perubahan
                         </Button>
                     </DialogFooter>
-                </VendorCreateForm>
+                </VendorUpdateForm>
             </DialogContent>
         </Dialog>
     )

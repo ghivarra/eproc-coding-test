@@ -20,7 +20,7 @@ export default function VendorItem({ props, onUpdate }: { props: VendorItemType,
                 </CardAction>
             </CardHeader>
             <CardFooter>
-                <VendorUpdate onUpdate={onUpdate} />
+                <VendorUpdate defaultValue={props} onUpdate={onUpdate} />
                 <Button variant="link" className="text-red-600">
                     <Icon iconNode={Trash2} />
                     Hapus
