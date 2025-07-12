@@ -1,32 +1,27 @@
 import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Icon } from "@/components/icon"
-import { Plus } from "lucide-react"
-import VendorSearchForm from "./vendor-search-form"
 import { useState } from "react"
-import { Save } from "lucide-react"
+import { Save, SquarePen } from "lucide-react"
 import VendorCreateForm from "./vendor-create-form"
 
-export default function VendorCreate({ onUpdate }: { onUpdate: () => void }) {
+export default function VendorUpdate({ onUpdate }: { onUpdate: () => void }) {
 
     const [ isDialogOpen, setIsDialogOpen ] = useState(false)
 
     return (
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-            <div className="w-full flex justify-between">
-                <DialogTrigger asChild>
-                    <Button variant="outline">
-                        <Icon iconNode={Plus}></Icon>
-                        Tambah Vendor
-                    </Button>
-                </DialogTrigger>
-                <VendorSearchForm />
-            </div>
+            <DialogTrigger asChild>
+                <Button variant="outline" className="mr-4">
+                    <Icon iconNode={SquarePen}></Icon>
+                    Update
+                </Button>
+            </DialogTrigger>
             <DialogContent className="sm:max-w-[425px]">
                 <DialogHeader>
-                    <DialogTitle>Tambah Vendor</DialogTitle>
+                    <DialogTitle>Update Vendor</DialogTitle>
                     <DialogDescription>
-                        Anda bisa menambahkan vendor yang anda kelola di sini.
+                        Anda bisa merubah data vendor yang anda kelola di sini
                     </DialogDescription>
                 </DialogHeader>
                 <VendorCreateForm dialogToggle={setIsDialogOpen} onUpdate={onUpdate}>

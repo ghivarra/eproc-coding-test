@@ -46,3 +46,12 @@ export interface APIResponse {
     message: string,
     data: unknown,
 }
+
+export interface VendorItemType {
+    id: number,
+    name: string,
+    website: string,
+    founded_at: string,
+    user_id: number,
+    user_name: string,
+}
