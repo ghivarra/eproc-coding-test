@@ -48,25 +48,21 @@ class CatalogController extends Controller
 
             'register_date_start'      => ['required', 'date'],
             'register_date_end'        => ['required', 'date'],
-            'documentation_date_start' => ['required', 'date'],
-            'documentation_date_end'   => ['required', 'date'],
         ]);
 
         // set name
         $validation->setAttributeNames([
-            'title'                    => 'Judul/Nama Katalog',
-            'number'                   => 'Nomor Katalog',
-            'method'                   => 'Metode Pengadaan',
-            'location'                 => 'Lokasi Pekerjaan',
-            'qualification'            => 'Kualifikasi Penyedia Barang/Jasa',
-            'value'                    => 'Nilai HPS',
-            'vendor_id'                => 'Vendor',
-            'subfields.*'              => 'Sub Bidang Usaha',
-            'description'              => 'Keterangan',
-            'register_date_start'      => 'Jadwal Mulai Pendaftaran',
-            'register_date_end'        => 'Jadwal Pendaftaran Selesai',
-            'documentation_date_start' => 'Jadwal Mulai Pengambilan Dokumen',
-            'documentation_date_end'   => 'Jadwal Pengambilan Dokumen Selesai',
+            'title'               => 'Judul/Nama Katalog',
+            'number'              => 'Nomor Katalog',
+            'method'              => 'Metode Pengadaan',
+            'location'            => 'Lokasi Pekerjaan',
+            'qualification'       => 'Kualifikasi Penyedia Barang/Jasa',
+            'value'               => 'Nilai HPS',
+            'vendor_id'           => 'Vendor',
+            'subfields.*'         => 'Sub Bidang Usaha',
+            'description'         => 'Keterangan',
+            'register_date_start' => 'Jadwal Mulai Pendaftaran',
+            'register_date_end'   => 'Jadwal Pendaftaran Selesai',
         ]);
 
         // validasi vendor dan user
@@ -106,11 +102,8 @@ class CatalogController extends Controller
         $catalog->value = $input['value'];
         $catalog->vendor_id = $input['vendor_id'];
         $catalog->description = $input['description'];
-        $catalog->register_date_start = date('Y-m-d H:i:s', strtotime($input['register_date_start']));
-        $catalog->register_date_end = date('Y-m-d H:i:s', strtotime($input['register_date_end']));
-        $catalog->documentation_date_start = date('Y-m-d H:i:s', strtotime($input['documentation_date_start']));
-        $catalog->documentation_date_end = date('Y-m-d H:i:s', strtotime($input['documentation_date_end']));
-
+        $catalog->register_date_start = date('Y-m-d', strtotime($input['register_date_start']));
+        $catalog->register_date_end = date('Y-m-d', strtotime($input['register_date_end']));
         // save
         $isSaved = $catalog->save();
 
@@ -215,8 +208,6 @@ class CatalogController extends Controller
             'catalogs.description',
             'catalogs.register_date_start',
             'catalogs.register_date_end',
-            'catalogs.documentation_date_start',
-            'catalogs.documentation_date_end',
             'catalogs.created_at',
             'catalogs.updated_at',
         ];
@@ -321,8 +312,6 @@ class CatalogController extends Controller
             'catalogs.updated_at',
             // 'catalogs.method',
             // 'catalogs.description',
-            // 'catalogs.documentation_date_start',
-            // 'catalogs.documentation_date_end',
         ];
 
         // validasi
@@ -442,26 +431,22 @@ class CatalogController extends Controller
             'subfields.*'   => ['required',  'exists:subfields,id'],
             'description'   => ['sometimes'],
 
-            'register_date_start'      => ['required', 'date'],
-            'register_date_end'        => ['required', 'date'],
-            'documentation_date_start' => ['required', 'date'],
-            'documentation_date_end'   => ['required', 'date'],
+            'register_date_start' => ['required', 'date'],
+            'register_date_end'   => ['required', 'date'],
         ]);
 
         // set name
         $validation->setAttributeNames([
-            'title'                    => 'Judul/Nama Katalog',
-            'number'                   => 'Nomor Katalog',
-            'method'                   => 'Metode Pengadaan',
-            'location'                 => 'Lokasi Pekerjaan',
-            'qualification'            => 'Kualifikasi Penyedia Barang/Jasa',
-            'value'                    => 'Nilai HPS',
-            'subfields.*'              => 'Sub Bidang Usaha',
-            'description'              => 'Keterangan',
-            'register_date_start'      => 'Jadwal Mulai Pendaftaran',
-            'register_date_end'        => 'Jadwal Pendaftaran Selesai',
-            'documentation_date_start' => 'Jadwal Mulai Pengambilan Dokumen',
-            'documentation_date_end'   => 'Jadwal Pengambilan Dokumen Selesai',
+            'title'               => 'Judul/Nama Katalog',
+            'number'              => 'Nomor Katalog',
+            'method'              => 'Metode Pengadaan',
+            'location'            => 'Lokasi Pekerjaan',
+            'qualification'       => 'Kualifikasi Penyedia Barang/Jasa',
+            'value'               => 'Nilai HPS',
+            'subfields.*'         => 'Sub Bidang Usaha',
+            'description'         => 'Keterangan',
+            'register_date_start' => 'Jadwal Mulai Pendaftaran',
+            'register_date_end'   => 'Jadwal Pendaftaran Selesai',
         ]);
 
         // validasi vendor dan user
@@ -498,10 +483,8 @@ class CatalogController extends Controller
         $catalog->qualification = $input['qualification'];
         $catalog->value = $input['value'];
         $catalog->description = $input['description'];
-        $catalog->register_date_start = date('Y-m-d H:i:s', strtotime($input['register_date_start']));
-        $catalog->register_date_end = date('Y-m-d H:i:s', strtotime($input['register_date_end']));
-        $catalog->documentation_date_start = date('Y-m-d H:i:s', strtotime($input['documentation_date_start']));
-        $catalog->documentation_date_end = date('Y-m-d H:i:s', strtotime($input['documentation_date_end']));
+        $catalog->register_date_start = date('Y-m-d', strtotime($input['register_date_start']));
+        $catalog->register_date_end = date('Y-m-d', strtotime($input['register_date_end']));
 
         // save
         $isSaved = $catalog->save();

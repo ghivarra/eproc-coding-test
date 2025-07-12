@@ -1,6 +1,6 @@
 import AppLayout from "@/layouts/app-layout"
 import { fetchApi, processError } from "@/lib/common"
-import { APIResponse, BreadcrumbItem, VendorItemType } from "@/types"
+import { APIResponse, BreadcrumbItem, SubfieldSelectType, SubfieldType, VendorItemType } from "@/types"
 import { Head, usePage } from "@inertiajs/react"
 import { AxiosResponse } from "axios"
 import { useCallback, useEffect, useState } from "react"
@@ -22,7 +22,7 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ]
 
-export default function Vendor() {
+export default function VendorCatalog() {
 
     const { props } = usePage()
     const [ vendor, setVendor ] = useState<VendorItemType|undefined>(undefined)
@@ -50,10 +50,53 @@ export default function Vendor() {
         })
     }, [props.id])
 
+    
+
+    const [ subfields, setSubfields ] = useState<SubfieldSelectType[]>([])
+
+    // fetch subfields
+    const fetchSubfields = useCallback(() => {
+        const axios = fetchApi()
+        axios.get(route('api.subfield'), {
+            params: {
+                // no params
+            }
+        }).then((response: AxiosResponse) => {
+            const res = response.data as APIResponse
+            if (res.status === 'success') {
+                const data = res.data as SubfieldType[]
+                if (data.length > 0) {
+                    const subfieldsArray: {
+                        label: string,
+                        value: string
+                    }[]  = []
+
+                    data.forEach((subfield) => {
+                        subfieldsArray.push({
+                            value: subfield.id.toString(),
+                            label: `Bidang ${subfield.field_name} | Sub Bidang ${subfield.name}`
+                        })
+                    })
+
+                    // set
+                    setSubfields(subfieldsArray)
+                }
+            } else {
+                toast.warning(res.message)
+            }
+        }).catch((err) => {
+            console.error(err)
+            if (typeof err.response.data.message !== 'undefined') {
+                processError({ err: [] }, err.response.data.message)
+            }
+        })
+    }, [])
+
     // use effect
     useEffect(() => {
         fetchVendorData()
-    }, [fetchVendorData])
+        fetchSubfields()
+    }, [fetchVendorData, fetchSubfields])
 
     return (
         <main>
@@ -65,7 +108,7 @@ export default function Vendor() {
                         <p className="text-gray-600">Tambah, update data, dan hapus katalog pada vendor { vendor && vendor.name } yang anda kelola.</p>
                     </div>
                     <section>
-                        <VendorCatalogList vendorID={props.id as number}></VendorCatalogList>
+                        <VendorCatalogList subfields={subfields} vendorID={props.id as number}></VendorCatalogList>
                     </section>
                 </div>
             </AppLayout>

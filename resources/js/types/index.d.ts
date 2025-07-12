@@ -95,3 +95,14 @@ interface CatalogItem {
     description?: string,
     subfields_collection?: SubfieldsCollection[]
 }
+
+interface SubfieldType {
+    id: number,
+    name: string,
+    field_name: string
+}
+
+interface SubfieldSelectType {
+    label: string,
+    value: string
+}

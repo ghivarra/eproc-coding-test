@@ -14,7 +14,7 @@ class SubfieldController extends Controller
     {
         // input
         $validation = Validator::make($request->all(), [
-            'field_id' => ['required', 'exists:fields,id']
+            'field_id' => ['sometimes', 'exists:fields,id']
         ]);
 
         // name
@@ -39,10 +39,16 @@ class SubfieldController extends Controller
         $input = $validation->validated();
 
         // get all
-        $data = Subfield::select('id', 'name')
-                        ->where('field_id', $input['field_id'])
-                        ->orderBy('name', 'asc')
-                        ->get();
+        $orm = Subfield::select('subfields.id', 'subfields.name', 'fields.name as field_name')
+                       ->join('fields', 'field_id', '=', 'fields.id');
+
+        if (isset($input['field_id']))
+        {
+            $orm->where('field_id', $input['field_id']);
+        }
+
+        // get
+        $data = $orm->orderBy('field_name', 'asc')->get();
 
         if (empty($data))
         {

@@ -49,10 +49,8 @@ return new class extends Migration
             $table->integer('value')->unsigned();
             $table->bigInteger('vendor_id')->unsigned()->index();
             $table->text('description');
-            $table->datetime('register_date_start');
-            $table->datetime('register_date_end');
-            $table->datetime('documentation_date_start');
-            $table->datetime('documentation_date_end');
+            $table->date('register_date_start');
+            $table->date('register_date_end');
             $table->timestamps();
             $table->softDeletes();
 

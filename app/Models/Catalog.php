@@ -63,8 +63,6 @@ class Catalog extends Model
         'description',
         'register_date_start',
         'register_date_end',
-        'documentation_date_start',
-        'documentation_date_end',
     ];
 
     /**

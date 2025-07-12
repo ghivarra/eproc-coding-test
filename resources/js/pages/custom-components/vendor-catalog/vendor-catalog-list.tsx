@@ -2,13 +2,14 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Table, TableBody, TableFooter, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { fetchApi, formatNumber, processError } from "@/lib/common"
-import { APIResponse, CatalogItem } from "@/types"
+import { APIResponse, CatalogItem, SubfieldSelectType } from "@/types"
 import { AxiosResponse } from "axios"
 import { useCallback, useEffect, useState } from "react"
 import { toast } from "sonner"
 import VendorCatalogListItem from "./vendor-catalog-list-item"
+import VendorCatalogCreate from "./vendor-catalog-create"
 
-export default function VendorCatalogList({ vendorID }: { vendorID: number }) {
+export default function VendorCatalogList({ vendorID, subfields }: { vendorID: number, subfields: SubfieldSelectType[] }) {
 
     type FetchedCatalog = {
         total: number,
@@ -112,7 +113,9 @@ export default function VendorCatalogList({ vendorID }: { vendorID: number }) {
     // render
     return (
         <>
-            
+            <div className="mb-4">
+                <VendorCatalogCreate vendorID={vendorID} subfields={subfields} refreshData={fetchCatalogData} />
+            </div>
             <Table>
                 <TableHeader>
                     <TableRow className="bg-secondary">
