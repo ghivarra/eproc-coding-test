@@ -1,5 +1,6 @@
 import { router } from "@inertiajs/react"
 import axios from "axios"
+import { toast } from "sonner"
 
 const deleteCookie = (name: string) => {
     setCookie(name, '', 0)
@@ -61,5 +62,14 @@ const logout = () => {
     router.visit(route('home'))
 }
 
+const processError = (errorList: object, message: string) => {
+    const errors: string[] = []
+    Object.values(errorList).forEach((value: string[]) => {
+        value.forEach((item) => {
+            errors.push(item)
+        })
+    })
+    toast.error(message + '. ' + errors.join(' '))
+}
 
-export { deleteCookie, setCookie, getCookie, checkAccess, fetchApi, logout }
+export { deleteCookie, setCookie, getCookie, checkAccess, fetchApi, logout, processError }

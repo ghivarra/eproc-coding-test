@@ -10,7 +10,7 @@ type PropType = {
 export default function AuthLayout({ children, title }: PropType) {
     return (
         <main>
-            <Toaster position="top-center" />
+            <Toaster position="top-center" richColors />
             <div className="bg-muted flex min-h-svh flex-col items-center justify-center gap-6 p-6 md:p-10">
                 <div className="flex w-full max-w-sm flex-col gap-6">
                     <Link href={route('home')} className="flex items-center gap-2 self-center font-medium">

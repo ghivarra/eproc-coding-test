@@ -32,7 +32,7 @@ export default function Register() {
         .catch((err) => {
             console.log(err)
             if (typeof err.response.data.message !== 'undefined') {
-                toast(err.response.data.message)
+                toast.warning(err.response.data.message)
             }
         })
 
@@ -53,19 +53,19 @@ export default function Register() {
                 
                 // set response
                 if (res.status === 'success') {
-                    toast(res.message + '. Anda akan dialihkan dalam beberapa saat')
+                    toast.success(res.message + '. Anda akan dialihkan dalam beberapa saat')
                     setTimeout(() => {
                         router.visit(route('panel.dashboard'))
                     }, 2000)
                 } else {
                     console.warn(res.message, res.data)
-                    toast(res.message)
+                    toast.warning(res.message)
                 }
             })
             .catch((err) => {
                 console.error(err)
                 if (typeof err.response.data.message !== 'undefined') {
-                    toast(err.response.data.message)
+                    toast.error(err.response.data.message)
                 }
             })
     }
@@ -85,9 +85,9 @@ export default function Register() {
 
                 <Card>
                     <CardHeader className="text-center mb-4">
-                        <CardTitle className="text-xl">Form Registrasi</CardTitle>
+                        <CardTitle className="text-xl">Halaman Login</CardTitle>
                         <CardDescription>
-                            Input data sesuai form untuk melanjutkan pendaftaran.
+                            Login menggunakan email dan password yang sudah terdaftar
                         </CardDescription>
                     </CardHeader>
                     <CardContent>

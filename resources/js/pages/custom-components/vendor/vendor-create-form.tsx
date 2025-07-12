@@ -4,11 +4,15 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { Input } from "@/components/ui/input"
 import { ReactNode } from "react"
+import { fetchApi, processError } from "@/lib/common"
+import { AxiosResponse } from "axios"
+import { toast } from "sonner"
+import { APIResponse } from "@/types"
 
 const VendorQuerySchema = z.object({
     name: z.string().min(1, { message: 'Nama vendor harus diisi' }),
     website: z.url({ message: 'Website tidak valid' }),
-    foundedAt: z.number()
+    foundedAt: z.string()
 })
 
 type VendorCreateFormProps = {
@@ -23,13 +27,37 @@ export default function VendorCreateForm({ children, dialogToggle }: VendorCreat
         defaultValues: {
             name: '',
             website: '',
-            foundedAt: 2000
+            foundedAt: '2000'
         }
     })
 
     const sendFormData = (data: z.infer<typeof VendorQuerySchema>) => {
-        console.log(data)
-        dialogToggle(false)
+        
+        const input = new FormData()
+        input.append('name', data.name)
+        input.append('website', data.website)
+        input.append('founded_at', data.foundedAt)
+        
+        const axios = fetchApi()
+        axios.post(route('api.vendor.create'), input)
+            .then((response: AxiosResponse) => {
+                const res = response.data as APIResponse
+                if (res.status === 'success') {
+                    toast.success(`Vendor ${data.name} berhasil dibuat`)
+                    dialogToggle(false)
+                }
+            })
+            .catch((err) => {
+                console.error(err)
+                if (typeof err.response.data.message !== 'undefined') {
+                    const errorResponse: {
+                        name?: string[],
+                        website?: string[],
+                        foundedAt?: string[],
+                    } = err.response.data.data.errors
+                    processError(errorResponse, err.response.data.message)
+                }
+            })
     }
 
     return (
