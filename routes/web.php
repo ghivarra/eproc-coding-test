@@ -1,6 +1,8 @@
 <?php
 
+use App\Http\Controllers\API\Panel\CatalogController;
 use App\Http\Controllers\API\Panel\DashboardController;
+use App\Http\Controllers\API\Panel\VendorController;
 use App\Http\Controllers\View\AuthViewController;
 use Illuminate\Support\Facades\Route;
 
@@ -19,11 +21,11 @@ Route::prefix('panel')->group(function() {
     Route::get('dashboard', [DashboardController::class, 'index'])->name('panel.dashboard');
 
     // vendor
-    Route::get('vendor')->name('panel.vendor');
-    Route::get('vendor/catalog')->name('panel.vendor.catalog');
+    Route::get('vendor', [VendorController::class, 'index'])->name('panel.vendor');
+    Route::get('vendor/catalog', [VendorController::class, 'catalog'])->name('panel.vendor.catalog');
 
     // catalogs
-    Route::get('catalog')->name('panel.catalog');
+    Route::get('catalog', [CatalogController::class, 'index'])->name('panel.catalog');
 });
 
 // require_once __DIR__ . '/auth.php';

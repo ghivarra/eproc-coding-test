@@ -14,6 +14,16 @@ const mainNavItems: NavItem[] = [
         href: route('panel.dashboard'),
         icon: DynamicIcon('LayoutGrid'),
     },
+    {
+        title: 'Vendor',
+        href: route('panel.vendor'),
+        icon: DynamicIcon('Building2'),
+    },
+    {
+        title: 'Katalog',
+        href: route('panel.catalog'),
+        icon: DynamicIcon('ChartColumnStacked'),
+    },
 ];
 
 const footerNavItems: NavItem[] = [

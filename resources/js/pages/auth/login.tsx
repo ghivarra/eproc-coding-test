@@ -1,12 +1,6 @@
 import AuthLayout from "@/layouts/auth-layout"
 import { Button } from "@/components/ui/button"
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Link, router } from "@inertiajs/react"
 import { Head } from "@inertiajs/react"
@@ -15,15 +9,7 @@ import { APIResponse } from "@/types"
 import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form"
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { toast } from "sonner"
 import { setCookie } from "@/lib/common"
 import { checkAccess } from "@/lib/common"

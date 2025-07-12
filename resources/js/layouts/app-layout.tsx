@@ -6,7 +6,7 @@ import ProviderLayout from './provider-layout';
 interface AppLayoutProps {
     children: ReactNode,
     breadcrumbs?: BreadcrumbItem[],
-    updateUser: React.Dispatch<React.SetStateAction<User | null>>
+    updateUser?: React.Dispatch<React.SetStateAction<User | null>>
 }
 
 export default function AppLayout({ children, breadcrumbs, updateUser, ...props }: AppLayoutProps) {

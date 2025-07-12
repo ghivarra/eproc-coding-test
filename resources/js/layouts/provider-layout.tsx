@@ -7,7 +7,7 @@ import { router } from "@inertiajs/react"
 
 interface ProviderLayoutProps {
     children: ReactNode,
-    updateUser: React.Dispatch<React.SetStateAction<User | null>>
+    updateUser?: React.Dispatch<React.SetStateAction<User | null>>
 }
 
 export default function ProviderLayout({ children, updateUser }: ProviderLayoutProps) {
@@ -23,7 +23,9 @@ export default function ProviderLayout({ children, updateUser }: ProviderLayoutP
             if (res.status === 'success') {
                 const data = res.data as User
                 setUser(data)
-                updateUser(data)
+                if (typeof updateUser !== 'undefined') {
+                    updateUser(data)
+                }
             } else {
                 logout()
                 router.visit(route('view.login'))
