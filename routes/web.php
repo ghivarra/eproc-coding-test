@@ -22,10 +22,11 @@ Route::prefix('panel')->group(function() {
 
     // vendor
     Route::get('vendor', [VendorController::class, 'index'])->name('panel.vendor');
-    Route::get('vendor/catalog', [VendorController::class, 'catalog'])->name('panel.vendor.catalog');
+    Route::get('vendor/catalog/{id}', [VendorController::class, 'catalog'])->name('panel.vendor.catalog');
 
     // catalogs
     Route::get('catalog', [CatalogController::class, 'index'])->name('panel.catalog');
+    Route::get('catalog/detail/{id}', [CatalogController::class, 'detail'])->name('panel.catalog.detail');
 });
 
 // require_once __DIR__ . '/auth.php';

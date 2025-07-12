@@ -21,6 +21,10 @@ export default function Vendor() {
             <AppLayout breadcrumbs={breadcrumbs}>
                 <Head title="Vendor" />
                 <div className="flex h-full flex-1 flex-col gap-4 rounded-xl p-4 overflow-x-auto">
+                    <div className="mb-4">
+                        <h1 className="font-bold text-3xl mb-1">Vendor</h1>
+                        <p className="text-gray-600">Tambah, update data, dan hapus vendor yang anda kelola.</p>
+                    </div>
                     <VendorList />
                 </div>
             </AppLayout>

@@ -9,6 +9,7 @@ import { CustomAlertDialog } from "@/pages/custom-dialogs/custom-alert-dialog"
 import { fetchApi, processError } from "@/lib/common"
 import { AxiosResponse } from "axios"
 import { toast } from "sonner"
+import { router } from "@inertiajs/react"
 
 export default function VendorItem({ props, refreshData }: { props: VendorItemType, refreshData: () => void }) {
 
@@ -53,13 +54,17 @@ export default function VendorItem({ props, refreshData }: { props: VendorItemTy
         confirmTextVariant: "destructive"
     }
 
+    const visitVendor = () => {
+        router.visit(route('panel.vendor.catalog', props.id))
+    }
+
     return (
         <Card className="mb-8 bg-gradient-to-bl from-white to-cyan-50">
             <CardHeader>
                 <CardTitle>{props.name} ({props.founded_at})</CardTitle>
                 <CardDescription>{props.website}</CardDescription>
                 <CardAction>
-                    <Button type="button">
+                    <Button onClick={visitVendor} type="button">
                         <Icon iconNode={LogIn} />
                         Masuk
                     </Button>

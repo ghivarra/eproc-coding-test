@@ -310,19 +310,19 @@ class CatalogController extends Controller
             'catalogs.uuid',
             'catalogs.title',
             'catalogs.number',
-            'catalogs.method',
             'catalogs.location',
             'catalogs.qualification',
             'catalogs.value',
             'catalogs.vendor_id',
             'vendors.name as vendor_name',
-            'catalogs.description',
             'catalogs.register_date_start',
             'catalogs.register_date_end',
-            'catalogs.documentation_date_start',
-            'catalogs.documentation_date_end',
             'catalogs.created_at',
             'catalogs.updated_at',
+            // 'catalogs.method',
+            // 'catalogs.description',
+            // 'catalogs.documentation_date_start',
+            // 'catalogs.documentation_date_end',
         ];
 
         // validasi
@@ -362,47 +362,47 @@ class CatalogController extends Controller
         }
 
         // data
-        $data = $data->toArray();
-
-        // get all
-        $dataIDS     = array_column($data, 'id');
-        $selectedCol = [
-            'catalog_id',
-            'catalogs_fields_subfields.field_id', 
-            'fields.name as field_name', 
-            'subfield_id',
-            'subfields.name as subfield_name',
-        ];
-
-        $subfields = CatalogFieldSubfield::select($selectedCol)
-                                         ->join('fields', 'catalogs_fields_subfields.field_id', '=', 'fields.id')
-                                         ->join('subfields', 'catalogs_fields_subfields.field_id', '=', 'subfields.id')
-                                         ->whereIn('catalog_id', $dataIDS)
-                                         ->get();
-
-        foreach ($data as $i => $item):
-
-            $data[$i]['subfields_collection'] = [];
-
-            if (empty($subfields))
-            {
-                continue;
-            }
-
-            foreach ($subfields as $n => $sub):
-
-                if ($sub->catalog_id === $item['id'])
-                {
-                    // push into collection
-                    array_push($data[$i]['subfields_collection'], $sub);
-
-                    // unset
-                    unset($subfields[$n]);
-                }
-
-            endforeach;
-
-        endforeach;
+//        $data = $data->toArray();
+//
+//        // get all
+//        $dataIDS     = array_column($data, 'id');
+//        $selectedCol = [
+//            'catalog_id',
+//            'catalogs_fields_subfields.field_id', 
+//            'fields.name as field_name', 
+//            'subfield_id',
+//            'subfields.name as subfield_name',
+//        ];
+//
+//        $subfields = CatalogFieldSubfield::select($selectedCol)
+//                                         ->join('fields', 'catalogs_fields_subfields.field_id', '=', 'fields.id')
+//                                         ->join('subfields', 'catalogs_fields_subfields.field_id', '=', 'subfields.id')
+//                                         ->whereIn('catalog_id', $dataIDS)
+//                                         ->get();
+//
+//        foreach ($data as $i => $item):
+//
+//            $data[$i]['subfields_collection'] = [];
+//
+//            if (empty($subfields))
+//            {
+//                continue;
+//            }
+//
+//            foreach ($subfields as $n => $sub):
+//
+//                if ($sub->catalog_id === $item['id'])
+//                {
+//                    // push into collection
+//                    array_push($data[$i]['subfields_collection'], $sub);
+//
+//                    // unset
+//                    unset($subfields[$n]);
+//                }
+//
+//            endforeach;
+//
+//        endforeach;
 
         // send response
         return response()->json([

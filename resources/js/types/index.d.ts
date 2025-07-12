@@ -66,3 +66,32 @@ interface CustomAlertDialogProps {
     confirmText: string,
     confirmTextVariant: "link" | "default" | "destructive" | "outline" | "secondary" | "ghost" | null | undefined,
 }
+
+interface SubfieldsCollection {
+    catalog_id: number,
+    field_id: number,
+    field_name: string,
+    subfield_id: number,
+    subfield_name: string,
+}
+
+interface CatalogItem {
+    id: number,
+    uuid: string,
+    title: string,
+    number: string,
+    location: string,
+    qualification: string,
+    value: number,
+    vendor_id: number,
+    vendor_name: string,
+    register_date_start: string,
+    register_date_end: string,
+    created_at: string,
+    updated_at: string,
+    method: string?,
+    documentation_date_start?: string,
+    documentation_date_end?: string,
+    description?: string,
+    subfields_collection?: SubfieldsCollection[]
+}

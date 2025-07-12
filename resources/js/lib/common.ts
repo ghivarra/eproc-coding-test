@@ -72,4 +72,49 @@ const processError = (errorList: object, message: string) => {
     toast.error(message + '. ' + errors.join(' '))
 }
 
-export { deleteCookie, setCookie, getCookie, checkAccess, fetchApi, logout, processError }
+const formatCurrency = (value: number): string => {
+    const formatter = new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' });
+    const amount = formatter.format(value)
+
+    return (amount.includes(',00')) ? amount.slice(0, (amount.length - 3)) : amount
+}
+
+const formatDateTime = (time: string | undefined): string  => {
+
+    if (typeof time === 'undefined') {
+        return ''
+    }
+
+    let utcTime = ''
+
+    if (time.length === 10) {
+
+        utcTime = time + 'T12:00:00+00:00';
+
+    } else {
+
+        // convert to UTC
+        // 2025-01-05 23:11:06 become 2025-01-05T23:11:06+00:00
+        utcTime = time.includes('T') ? time : time.replace(' ', 'T') + '+00:00';
+    }
+    
+    const dateObj = new Date(utcTime)
+    const result = dateObj.toLocaleString('id-ID', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        timeZoneName: 'short'
+    })
+
+    return (time.length === 10) ? result.substring(0, 10) : result
+}
+
+const formatNumber = (value: number): string => {
+    const formatter = new Intl.NumberFormat('id-ID');
+    return formatter.format(value)
+}
+
+export { deleteCookie, setCookie, getCookie, checkAccess, fetchApi, logout, processError, formatCurrency, formatDateTime, formatNumber }
