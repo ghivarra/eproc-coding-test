@@ -117,4 +117,9 @@ const formatNumber = (value: number): string => {
     return formatter.format(value)
 }
 
-export { deleteCookie, setCookie, getCookie, checkAccess, fetchApi, logout, processError, formatCurrency, formatDateTime, formatNumber }
+const localDate = (date: string) => {
+    const datetime = new Date(date)
+    return datetime.toLocaleDateString('id-ID')
+}
+
+export { deleteCookie, setCookie, getCookie, checkAccess, fetchApi, logout, processError, formatCurrency, formatDateTime, formatNumber, localDate }
