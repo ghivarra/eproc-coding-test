@@ -16,3 +16,9 @@ Aplikasi pengajuan reimbursement simpel dengan menggunakan Laravel 12 &amp; Reac
 
 ## Homepage
 Halaman home akan langsung mengarahkan ke login dan pembuatan user sehingga lebih mudah untuk mencoba
+
+## Full PDF Documentation
+Untuk Full PDF Documentation, bisa diunduh [di sini](https://github.com/ghivarra/eproc-coding-test/blob/main/documentation/Full-Documentation.pdf)
+
+## Postman Collection
+Untuk testing collection dengan Postman, bisa diunduh [di sini](https://github.com/ghivarra/eproc-coding-test/blob/main/documentation/E-Procurement%20-%20Coding%20Test.postman_collection.json)
