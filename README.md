@@ -1,5 +1,5 @@
-# Reimbursement Coding Challenge
-Aplikasi pengajuan reimbursement simpel dengan menggunakan Laravel 12 &amp; ReactJS + TypeScript
+# E-Procurement Coding Test
+Aplikasi E-Procurement simpel dengan menggunakan Laravel 12 &amp; ReactJS + TypeScript
 
 ## Dev Dependency
 - PHP minimal versi 8.3
