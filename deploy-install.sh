@@ -1,5 +1,0 @@
-#!/bin/bash
-
-source ~/.bashrc
-php artisan migrate:fresh
-php artisan db:seed DatabaseSeeder
