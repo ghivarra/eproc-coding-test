@@ -1,0 +1,2784 @@
+{
+	"info": {
+		"_postman_id": "dbdfa342-f02e-4dd2-85c3-35b35ddbd3a0",
+		"name": "E-Procurement - Coding Test",
+		"description": "Dokumentasi Aplikasi E-Procurement yang dibuat sebagai persyaratan coding test. Berisi kumpulan API Endpoint untuk menjalankan aplikasi tersebut. Diantaranya:\n\n| Endpoint | Method | Deskripsi |\n| --- | --- | --- |\n| /api/register | POST | Pendaftaran akun user baru. |\n| /api/login | POST | Autentikasi akun user. |\n| /api/logout | POST | Logout dan revoke token user. |\n| /api/user | GET | Akses data user aktif (current user). |\n| /api/admin/field | GET | Akses data bidang dalam e-procurement. |\n| /api/admin/subfield | GET | Akses data sub bidang dalam e-procurement. |\n| /api/admin/vendor | GET | Akses data vendor. (plural) |\n| /api/admin/vendor/find | GET | Akses data spesifik vendor. (singular) |\n| /api/admin/vendor/create | POST | Buat vendor baru. |\n| /api/admin/vendor/update | PATCH | Update data vendor. |\n| /api/admin/vendor/delete | DELETE | Hapus vendor. |\n| /api/admin/catalog | GET | Akses data katalog. (plural) |\n| /api/admin/catalog/find | GET | Akses data spesifik katalog. (singular) |\n| /api/admin/catalog/create | POST | Buat katalog baru. |\n| /api/admin/catalog/update | PATCH | Updata data katalog. |\n| /api/admin/catalog/delete | DELETE | Hapus katalog. |",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
+		"_exporter_id": "17226759"
+	},
+	"item": [
+		{
+			"name": "User",
+			"item": [
+				{
+					"name": "Registration",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Origin",
+								"value": "{{base_url}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "name",
+									"value": "Ghivarra Senandika Rushdie",
+									"description": "Nama lengkap",
+									"type": "text"
+								},
+								{
+									"key": "email",
+									"value": "kontak@ghivarra.com",
+									"description": "Email untuk autentikasi",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "User*12345",
+									"description": "Kata sandi",
+									"type": "text"
+								},
+								{
+									"key": "password_confirmation",
+									"value": "User*12345",
+									"description": "Konfirmasi kata sandi",
+									"type": "text"
+								}
+							]
+						},
+						"url": "{{base_url}}/api/register",
+						"description": "## Registrasi User\n\nEndpoint untuk membuat user baru dengan parameter nama, alamat email, dan kata sandi\n\n### **Format Header**\n\n| Key | Value |\n| --- | --- |\n| Authorization | none |\n\n### Format Request\n\n- **Method**: POST\n    \n- **Endpoint**: `/api/register`\n    \n- **Content-Type**: application/json\n    \n- **Body Format:** multipart/form-data\n    \n- **Request Body**: Body memiliki parameter sebagai berikut:\n    \n\n| Nama Field | Tipe Data | Wajib / Required | Deskripsi |\n| --- | --- | --- | --- |\n| name | string | ya | Nama lengkap user. Maks. 200 karakter. |\n| email | string | ya | Email untuk autentikasi. Harus unik dan belum dipakai sebelumnya. Maks. 200 karakter |\n| password | string | ya | Kata sandi user. Harus mengandung minimal satu huruf kecil, kapital, angka, dan simbol. Minimal 10 karakter |\n| password_confirmation | string | ya | Identik dengan `password`. |\n\n### **Contoh Response**\n\n- **Sukses / Success**\n    \n\n``` json\n{\n    \"status\": \"success\",\n    \"message\": \"User Ghivarra Senandika Rushdie berhasil ditambahkan\",\n    \"data\": {\n        \"id\": 1,\n        \"name\": \"Ghivarra Senandika Rushdie\",\n        \"email\": \"kontak@ghivarra.com\",\n        \"created_at\": \"2025-07-12T22:57:23.000000Z\",\n        \"updated_at\": \"2025-07-12T22:57:23.000000Z\"\n    }\n}\n\n ```\n\nPenjelasan response:\n\n| Nama Field | Tipe Data | Deskripsi |\n| --- | --- | --- |\n| status | string | Status request yang dikirim oleh server. Value dari field ini selalu diantara \"success\" atau \"error\". |\n| message | string | Pesan penjelasan secara literal dari server. |\n| data | object | Kumpulan data. (single) |\n\nDeskripsi Field `data`:\n\n| Nama Field | Tipe Data | Deskripsi |\n| --- | --- | --- |\n| id | integer | ID akun user yang baru dibuat. |\n| name | string | Nama lengkap yang digunakan di akun baru. |\n| email | string | Alamat email yang digunakan di akun baru. |\n| created_at | timestamp | Waktu akun dibuat. |\n| updated_at | timestamp | Waktu terakhir akun diupdate. |\n\n- **Gagal / Failed / Error**\n    \n\n``` json\n{\n    \"status\": \"error\",\n    \"message\": \"Gagal membuat akun pengguna\",\n    \"data\": {\n        \"errors\": {\n            \"email\": [\n                \"Email sudah digunakan.\"\n            ],\n            \"password\": [\n                \"Konfirmasi kolom Kata Sandi tidak cocok.\"\n            ]\n        }\n    }\n}\n\n ```\n\nJenis Error:\n\n| Kode | Message | Deskripsi |\n| --- | --- | --- |\n| 422 | Unprocessable Content | Ada kesalahan dalam pengisian atau kegagalan validasi form/input. |\n| 503 | Service Unavailable | Server sedang sibuk. |\n\nPenjelasan response:\n\n| Nama Field | Tipe Data | Deskripsi |\n| --- | --- | --- |\n| status | string | Status request yang dikirim oleh server. Value dari field ini selalu diantara \"success\" atau \"error\". |\n| message | string | Pesan penjelasan secara literal dari server. |\n| data | object | Kumpulan data. (single) |\n\nDeskripsi Field `data`:\n\n| Nama Field | Tipe Data | Deskripsi |\n| --- | --- | --- |\n| errors | object | Kumpulan error yang dihasilkan dari validasi server/backend. |\n\nDeskripsi Field `errors`:\n\n| Nama Field | Tipe Data | Deskripsi |\n| --- | --- | --- |\n| nama_kolom | array | Kumpulan pesan error berbentuk \\`string\\` yang disimpan dalam array. |"
+					},
+					"response": [
+						{
+							"name": "success",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "Origin",
+										"value": "",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "name",
+											"value": "Ghivarra Senandika Rushdie",
+											"type": "text"
+										},
+										{
+											"key": "email",
+											"value": "kontak@ghivarra.com",
+											"type": "text"
+										},
+										{
+											"key": "password",
+											"value": "User*12345",
+											"type": "text"
+										},
+										{
+											"key": "password_confirmation",
+											"value": "User*12345",
+											"type": "text"
+										}
+									]
+								},
+								"url": "/register"
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Host",
+									"value": "127.0.0.1:8000"
+								},
+								{
+									"key": "Connection",
+									"value": "close"
+								},
+								{
+									"key": "X-Powered-By",
+									"value": "PHP/8.4.10"
+								},
+								{
+									"key": "Cache-Control",
+									"value": "no-cache, private"
+								},
+								{
+									"key": "Date",
+									"value": "Sat, 12 Jul 2025 22:57:23 GMT"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": \"success\",\n    \"message\": \"User Ghivarra Senandika Rushdie berhasil ditambahkan\",\n    \"data\": {\n        \"name\": \"Ghivarra Senandika Rushdie\",\n        \"email\": \"kontak@ghivarra.com\",\n        \"updated_at\": \"2025-07-12T22:57:23.000000Z\",\n        \"created_at\": \"2025-07-12T22:57:23.000000Z\",\n        \"id\": 1\n    }\n}"
+						},
+						{
+							"name": "failed",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "Origin",
+										"value": "",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "name",
+											"value": "Ghivarra Senandika Rushdie",
+											"type": "text"
+										},
+										{
+											"key": "email",
+											"value": "kontak@ghivarra.com",
+											"type": "text"
+										},
+										{
+											"key": "password",
+											"value": "User*12345qw",
+											"type": "text"
+										},
+										{
+											"key": "password_confirmation",
+											"value": "User*12345",
+											"type": "text"
+										}
+									]
+								},
+								"url": "{{base_url_api}}/register"
+							},
+							"status": "Unprocessable Content",
+							"code": 422,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Host",
+									"value": "127.0.0.1:8000"
+								},
+								{
+									"key": "Connection",
+									"value": "close"
+								},
+								{
+									"key": "X-Powered-By",
+									"value": "PHP/8.4.10"
+								},
+								{
+									"key": "Cache-Control",
+									"value": "no-cache, private"
+								},
+								{
+									"key": "Date",
+									"value": "Sat, 12 Jul 2025 22:58:51 GMT"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": \"error\",\n    \"message\": \"Gagal membuat akun pengguna\",\n    \"data\": {\n        \"errors\": {\n            \"email\": [\n                \"Email sudah digunakan.\"\n            ],\n            \"password\": [\n                \"Konfirmasi kolom Kata Sandi tidak cocok.\"\n            ]\n        }\n    }\n}"
+						}
+					]
+				},
+				{
+					"name": "Authentication - Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let response = pm.response.json()",
+									"",
+									"if (typeof response.data.access_token !== 'undefined') {",
+									"    pm.collectionVariables.set('access_token', response.data.access_token)",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Origin",
+								"value": "{{base_url}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "email",
+									"value": "kontak@ghivarra.com",
+									"description": "Email untuk autentikasi",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "User*12345",
+									"description": "Kata sandi",
+									"type": "text"
+								}
+							]
+						},
+						"url": "{{base_url}}/api/login",
+						"description": "## Login User\n\nEndpoint untuk otorisasi user baru dengan parameter alamat email, dan kata sandi. Bila berhasil maka akan mendapat data access_token untuk mengakses halaman yang diproteksi dan juga data user\n\n### **Format Header**\n\n| Key | Value |\n| --- | --- |\n| Authorization | none |\n\n### Format Request\n\n- **Method**: POST\n    \n- **Endpoint**: `/api/login`\n    \n- **Content-Type**: application/json\n    \n- **Body Format:** multipart/form-data\n    \n- **Request Body**: Body memiliki parameter sebagai berikut:\n    \n\n| Nama Field | Tipe Data | Wajib / Required | Deskripsi |\n| --- | --- | --- | --- |\n| email | string | ya | Email untuk autentikasi. Harus unik dan belum dipakai sebelumnya. Maks. 200 karakter |\n| password | string | ya | Kata sandi user. Harus mengandung minimal satu huruf kecil, kapital, angka, dan simbol. Minimal 10 karakter |\n\n### **Contoh Response**\n\n- **Sukses / Success**\n    \n\n``` json\n{\n    \"status\": \"success\",\n    \"message\": \"Otorisasi berhasil\",\n    \"data\": {\n        \"access_token\": \"1|iQrzc0D9XctNFs58fGpstbPZozmwRjyVwOl5nCfx66807271\",\n        \"user\": {\n            \"id\": 1,\n            \"name\": \"Ghivarra Senandika Rushdie\",\n            \"email\": \"kontak@ghivarra.com\",\n            \"created_at\": \"2025-07-12T22:57:23.000000Z\",\n            \"updated_at\": \"2025-07-12T22:57:23.000000Z\",\n            \"deleted_at\": null\n        }\n    }\n}\n\n ```\n\nPenjelasan response:\n\n| Nama Field | Tipe Data | Deskripsi |\n| --- | --- | --- |\n| status | string | Status request yang dikirim oleh server. Value dari field ini selalu diantara \"success\" atau \"error\". |\n| message | string | Pesan penjelasan secara literal dari server. |\n| data | object | Kumpulan data. (single) |\n\nDeskripsi Field `data`:\n\n| Nama Field | Tipe Data | Deskripsi |\n| --- | --- | --- |\n| access_token | string | Bearer token untuk keperluan otorisasi. |\n| user | object | Kumpulan data user. |\n\nDeskripsi Field `user`:\n\n| Nama Field | Tipe Data | Deskripsi |\n| --- | --- | --- |\n| id | integer | ID akun user yang baru dibuat. |\n| name | string | Nama lengkap yang digunakan di akun baru. |\n| email | string | Alamat email yang digunakan di akun baru. |\n| created_at | timestamp | Waktu akun dibuat. |\n| updated_at | timestamp | Waktu terakhir akun diupdate. |\n\n- **Gagal / Failed / Error**\n    \n\n``` json\n{\n    \"status\": \"error\",\n    \"message\": \"Akun email dan password tidak cocok\",\n    \"data\": {\n        \"errors\": {\n            \"email\": [\n                \"Akun email dan password tidak cocok\"\n            ],\n            \"password\": [\n                \"Akun email dan password tidak cocok\"\n            ]\n        }\n    }\n}\n\n ```\n\nJenis Error:\n\n| Kode | Message | Deskripsi |\n| --- | --- | --- |\n| 401 | Unauthorized | Gagal otorisasi, email dan kata sandi tidak cocok. |\n\nPenjelasan response:\n\n| Nama Field | Tipe Data | Deskripsi |\n| --- | --- | --- |\n| status | string | Status request yang dikirim oleh server. Value dari field ini selalu diantara \"success\" atau \"error\". |\n| message | string | Pesan penjelasan secara literal dari server. |\n| data | object | Kumpulan data. (single) |\n\nDeskripsi Field `data`:\n\n| Nama Field | Tipe Data | Deskripsi |\n| --- | --- | --- |\n| errors | object | Kumpulan error yang dihasilkan dari validasi server/backend. |\n\nDeskripsi Field `errors`:\n\n| Nama Field | Tipe Data | Deskripsi |\n| --- | --- | --- |\n| nama_kolom | array | Kumpulan pesan error berbentuk \\`string\\` yang disimpan dalam array. |"
+					},
+					"response": [
+						{
+							"name": "success",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "Origin",
+										"value": "",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "email",
+											"value": "kontak@ghivarra.com",
+											"type": "text"
+										},
+										{
+											"key": "password",
+											"value": "User*12345",
+											"type": "text"
+										}
+									]
+								},
+								"url": "/login"
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Host",
+									"value": "127.0.0.1:8000"
+								},
+								{
+									"key": "Connection",
+									"value": "close"
+								},
+								{
+									"key": "X-Powered-By",
+									"value": "PHP/8.4.10"
+								},
+								{
+									"key": "Cache-Control",
+									"value": "no-cache, private"
+								},
+								{
+									"key": "Date",
+									"value": "Sat, 12 Jul 2025 22:59:38 GMT"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": \"success\",\n    \"message\": \"Otorisasi berhasil\",\n    \"data\": {\n        \"access_token\": \"1|iQrzc0D9XctNFs58fGpstbPZozmwRjyVwOl5nCfx66807271\",\n        \"user\": {\n            \"id\": 1,\n            \"name\": \"Ghivarra Senandika Rushdie\",\n            \"email\": \"kontak@ghivarra.com\",\n            \"created_at\": \"2025-07-12T22:57:23.000000Z\",\n            \"updated_at\": \"2025-07-12T22:57:23.000000Z\",\n            \"deleted_at\": null\n        }\n    }\n}"
+						},
+						{
+							"name": "error",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "Origin",
+										"value": "",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "email",
+											"value": "kontak@ghivarra.com",
+											"description": "Email untuk autentikasi",
+											"type": "text"
+										},
+										{
+											"key": "password",
+											"value": "User*12345s",
+											"description": "Kata sandi",
+											"type": "text"
+										}
+									]
+								},
+								"url": "/login"
+							},
+							"status": "Unauthorized",
+							"code": 401,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Host",
+									"value": "127.0.0.1:8000"
+								},
+								{
+									"key": "Connection",
+									"value": "close"
+								},
+								{
+									"key": "X-Powered-By",
+									"value": "PHP/8.4.10"
+								},
+								{
+									"key": "Cache-Control",
+									"value": "no-cache, private"
+								},
+								{
+									"key": "Date",
+									"value": "Sun, 13 Jul 2025 01:19:27 GMT"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": \"error\",\n    \"message\": \"Akun email dan password tidak cocok\",\n    \"data\": {\n        \"errors\": {\n            \"email\": [\n                \"Akun email dan password tidak cocok\"\n            ],\n            \"password\": [\n                \"Akun email dan password tidak cocok\"\n            ]\n        }\n    }\n}"
+						}
+					]
+				},
+				{
+					"name": "Authentication - Logout",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Origin",
+								"value": "{{base_url}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": []
+						},
+						"url": "{{base_url_api}}/logout",
+						"description": "## Logout User\n\nEndpoint untuk logout akun dan me-revoke token yang dipakai oleh user\n\n### **Format Header**\n\n| Key | Value |\n| --- | --- |\n| Authorization | Bearer Token |\n\n### Format Request\n\n- **Method**: POST\n    \n- **Endpoint**: `/api/logout`\n    \n- **Content-Type**: application/json\n    \n- **Body Format:** any\n    \n- **Request Body**: Body kosong.\n    \n\n### **Contoh Response**\n\n- **Sukses / Success**\n    \n\n``` json\n{\n    \"status\": \"success\",\n    \"message\": \"Berhasil keluar, token anda sudah dihapus\"\n}\n\n ```\n\nPenjelasan response:\n\n| Nama Field | Tipe Data | Deskripsi |\n| --- | --- | --- |\n| status | string | Status request yang dikirim oleh server. Value dari field ini selalu diantara \"success\" atau \"error\". |\n| message | string | Pesan penjelasan secara literal dari server. |\n\n- **Gagal / Failed / Error**\n    \n\n``` json\n{\n    \"status\": \"error\",\n    \"message\": \"Anda belum melakukan autentikasi login\",\n    \"data\": {\n        \"errors\": {\n            \"field\": [\n                \"Anda belum melakukan autentikasi login\"\n            ]\n        }\n    }\n}\n\n ```\n\nJenis Error:\n\n| Kode | Message | Deskripsi |\n| --- | --- | --- |\n| 401 | Unauthorized | Anda belum melakukan login. |\n\nPenjelasan response:\n\n| Nama Field | Tipe Data | Deskripsi |\n| --- | --- | --- |\n| status | string | Status request yang dikirim oleh server. Value dari field ini selalu diantara \"success\" atau \"error\". |\n| message | string | Pesan penjelasan secara literal dari server. |\n| data | object | Kumpulan data. (single) |\n\nDeskripsi Field `data`:\n\n| Nama Field | Tipe Data | Deskripsi |\n| --- | --- | --- |\n| errors | object | Kumpulan error yang dihasilkan dari validasi server/backend. |\n\nDeskripsi Field `errors`:\n\n| Nama Field | Tipe Data | Deskripsi |\n| --- | --- | --- |\n| nama_kolom | array | Kumpulan pesan error berbentuk \\`string\\` yang disimpan dalam array. |"
+					},
+					"response": [
+						{
+							"name": "success",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "Origin",
+										"value": "",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": []
+								},
+								"url": "/logout"
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Host",
+									"value": "127.0.0.1:8000"
+								},
+								{
+									"key": "Connection",
+									"value": "close"
+								},
+								{
+									"key": "X-Powered-By",
+									"value": "PHP/8.4.10"
+								},
+								{
+									"key": "Cache-Control",
+									"value": "no-cache, private"
+								},
+								{
+									"key": "Date",
+									"value": "Sat, 12 Jul 2025 23:00:22 GMT"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": \"success\",\n    \"message\": \"Berhasil keluar, token anda sudah dihapus\"\n}"
+						},
+						{
+							"name": "failed",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "Origin",
+										"value": "{{base_url}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": []
+								},
+								"url": "{{base_url_api}}/logout"
+							},
+							"status": "Unauthorized",
+							"code": 401,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Host",
+									"value": "127.0.0.1:8000"
+								},
+								{
+									"key": "Connection",
+									"value": "close"
+								},
+								{
+									"key": "X-Powered-By",
+									"value": "PHP/8.4.10"
+								},
+								{
+									"key": "Cache-Control",
+									"value": "no-cache, private"
+								},
+								{
+									"key": "Date",
+									"value": "Sun, 13 Jul 2025 01:22:35 GMT"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": \"error\",\n    \"message\": \"Anda belum melakukan autentikasi login\",\n    \"data\": {\n        \"errors\": {\n            \"field\": [\n                \"Anda belum melakukan autentikasi login\"\n            ]\n        }\n    }\n}"
+						}
+					]
+				},
+				{
+					"name": "Fetch User Data",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": "{{base_url}}/api/user",
+						"description": "## Fetch User Data\n\nEndpoint untuk menarik data user.\n\n### **Format Header**\n\n| Key | Value |\n| --- | --- |\n| Authorization | Bearer Token |\n\n### Format Request\n\n- **Method**: GET\n    \n- **Endpoint**: `/api/user`\n    \n- **Content-Type**: application/json\n    \n- **Body Format:** none\n    \n- **Request Body**: none\n    \n\n### **Contoh Response**\n\n- **Sukses / Success**\n    \n\n``` json\n{\n    \"status\": \"success\",\n    \"message\": \"Otorisasi berhasil\",\n    \"data\": {\n        \"id\": 1,\n        \"name\": \"Ghivarra Senandika Rushdie\",\n        \"email\": \"kontak@ghivarra.com\",\n        \"created_at\": \"2025-07-12T22:57:23.000000Z\",\n        \"updated_at\": \"2025-07-12T22:57:23.000000Z\",\n        \"deleted_at\": null\n    }\n}\n\n ```\n\nPenjelasan response:\n\n| Nama Field | Tipe Data | Deskripsi |\n| --- | --- | --- |\n| status | string | Status request yang dikirim oleh server. Value dari field ini selalu diantara \"success\" atau \"error\". |\n| message | string | Pesan penjelasan secara literal dari server. |\n| data | object | Kumpulan data. (single) |\n\nDeskripsi Field `data`:\n\n| Nama Field | Tipe Data | Deskripsi |\n| --- | --- | --- |\n| id | integer | ID akun user yang baru dibuat. |\n| name | string | Nama lengkap yang digunakan di akun baru. |\n| email | string | Alamat email yang digunakan di akun baru. |\n| created_at | timestamp | Waktu akun dibuat. |\n| updated_at | timestamp | Waktu terakhir akun diupdate. |\n| deleted_at | timestamp | Kolom soft delete. Bila value `null` maka item masih aktif. |\n\n- **Gagal / Failed / Error**\n    \n\n``` json\n{\n    \"status\": \"error\",\n    \"message\": \"Anda Belum Terotorisasi\",\n    \"data\": null\n}\n\n ```\n\nJenis Error:\n\n| Kode | Message | Deskripsi |\n| --- | --- | --- |\n| 422 | Unprocessable Content | Ada kesalahan dalam pengisian atau kegagalan validasi form/input. |\n\nPenjelasan response:\n\n| Nama Field | Tipe Data | Deskripsi |\n| --- | --- | --- |\n| status | string | Status request yang dikirim oleh server. Value dari field ini selalu diantara \"success\" atau \"error\". |\n| message | string | Pesan penjelasan secara literal dari server. |\n| data | null | Kumpulan data. (single) |"
+					},
+					"response": [
+						{
+							"name": "success",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": "/user"
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Host",
+									"value": "127.0.0.1:8000"
+								},
+								{
+									"key": "Connection",
+									"value": "close"
+								},
+								{
+									"key": "X-Powered-By",
+									"value": "PHP/8.4.10"
+								},
+								{
+									"key": "Cache-Control",
+									"value": "no-cache, private"
+								},
+								{
+									"key": "Date",
+									"value": "Sat, 12 Jul 2025 23:24:27 GMT"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": \"success\",\n    \"message\": \"Otorisasi berhasil\",\n    \"data\": {\n        \"id\": 1,\n        \"name\": \"Ghivarra Senandika Rushdie\",\n        \"email\": \"kontak@ghivarra.com\",\n        \"created_at\": \"2025-07-12T22:57:23.000000Z\",\n        \"updated_at\": \"2025-07-12T22:57:23.000000Z\",\n        \"deleted_at\": null\n    }\n}"
+						},
+						{
+							"name": "soft-fail",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": "{{base_url_api}}/user"
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Host",
+									"value": "127.0.0.1:8000"
+								},
+								{
+									"key": "Connection",
+									"value": "close"
+								},
+								{
+									"key": "X-Powered-By",
+									"value": "PHP/8.4.10"
+								},
+								{
+									"key": "Cache-Control",
+									"value": "no-cache, private"
+								},
+								{
+									"key": "Date",
+									"value": "Sat, 12 Jul 2025 23:24:52 GMT"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": \"error\",\n    \"message\": \"Anda Belum Terotorisasi\",\n    \"data\": null\n}"
+						}
+					]
+				}
+			],
+			"description": "Kumpulan endpoint untuk registrasi, login, dan logout user. Diantaranya:\n\n| Endpoint | Method | Deskripsi |\n| --- | --- | --- |\n| /api/register | POST | Pendaftaran akun user baru. |\n| /api/login | POST | Autentikasi akun user. |\n| /api/logout | POST | Logout dan revoke token user. |"
+		},
+		{
+			"name": "Admin",
+			"item": [
+				{
+					"name": "Vendor",
+					"item": [
+						{
+							"name": "Get Vendor Index",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/admin/vendor?query=&limit=10&offset=0",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"admin",
+										"vendor"
+									],
+									"query": [
+										{
+											"key": "query",
+											"value": "",
+											"description": "Query pencarian vendor"
+										},
+										{
+											"key": "limit",
+											"value": "10",
+											"description": "Limit batas pencarian vendor. Maks. 20"
+										},
+										{
+											"key": "offset",
+											"value": "0",
+											"description": "Offset penarikan data vendor"
+										}
+									]
+								},
+								"description": "## Get Vendor Index\n\nEndpoint untuk mengakses kumpulan data vendor untuk keperluan indeks.\n\n### **Format Header**\n\n| Key | Value |\n| --- | --- |\n| Authorization | Bearer Token |\n\n### Format Request\n\n- **Method**: GET\n    \n- **Endpoint**: `/api/admin/vendor`\n    \n- **Content-Type**: application/json\n    \n- **Body Format:** GET Query Params\n    \n- **Request Body**: GET Query memiliki parameter sebagai berikut:\n    \n\n| Nama Field | Tipe Data | Wajib / Required | Deskripsi |\n| --- | --- | --- | --- |\n| limit | integer | Ya | Limit batas pencarian vendor. Maks. 20 item dalam satu kali pencarian. |\n| offset | integer | Ya | Offset penarikan data indeks vendor. |\n| query | string | Tidak | Keyword pencarian data indeks vendor. **(OPSIONAL)** |\n\n### **Contoh Response**\n\n- **Sukses / Success**\n    \n\n``` json\n{\n    \"status\": \"success\",\n    \"message\": \"Data berhasil ditarik\",\n    \"data\": {\n        \"total\": 2,\n        \"totalFiltered\": 2,\n        \"data\": [\n            {\n                \"id\": 1,\n                \"name\": \"PT Jakarta Propertindo\",\n                \"website\": \"http://jakpro.com\",\n                \"founded_at\": \"2010\",\n                \"user_id\": 1,\n                \"user_name\": \"Ghivarra Senandika Rushdie\"\n            },\n            {\n                \"id\": 2,\n                \"name\": \"PT Jakarta Runnerindo\",\n                \"website\": \"http://website.com\",\n                \"founded_at\": \"2020\",\n                \"user_id\": 1,\n                \"user_name\": \"Ghivarra Senandika Rushdie\"\n            }\n        ]\n    }\n}\n\n ```\n\nPenjelasan response:\n\n| Nama Field | Tipe Data | Deskripsi |\n| --- | --- | --- |\n| status | string | Status request yang dikirim oleh server. Value dari field ini selalu diantara \"success\" atau \"error\". |\n| message | string | Pesan penjelasan secara literal dari server. |\n| data | array | Kumpulan data. (multiple) |\n\nDeskripsi Field `data`:\n\n| Nama Field | Tipe Data | Deskripsi |\n| --- | --- | --- |\n| id | integer | ID vendor. |\n| name | string | Nama vendor. |\n| website | string | Nama website vendor. |\n| founded_at | year | Tahun perusahaan vendor berdiri. |\n| user_id | integer | ID akun user pemilik/pengelola vendor. |\n| user_name | string | Nama akun user pemilik/pengelola vendor. |\n\n- **Gagal / Failed / Error**\n    \n\n``` json\n{\n    \"status\": \"error\",\n    \"message\": \"Gagal menarik data vendor\",\n    \"data\": {\n        \"errors\": {\n            \"limit\": [\n                \"Kolom limit tidak boleh lebih dari 20.\"\n            ]\n        }\n    }\n}\n\n ```\n\nJenis Error:\n\n| Kode | Message | Deskripsi |\n| --- | --- | --- |\n| 401 | Unauthorized | Token sudah kadaluwarsa atau otorisasi tidak berhasil. |\n| 422 | Unprocessable Content | Ada kesalahan dalam pengisian atau kegagalan validasi form/input. |\n\nPenjelasan response:\n\n| Nama Field | Tipe Data | Deskripsi |\n| --- | --- | --- |\n| status | string | Status request yang dikirim oleh server. Value dari field ini selalu diantara \"success\" atau \"error\". |\n| message | string | Pesan penjelasan secara literal dari server. |\n| data | object | Kumpulan data. (single) |\n\nDeskripsi Field `data`:\n\n| Nama Field | Tipe Data | Deskripsi |\n| --- | --- | --- |\n| errors | object | Kumpulan error yang dihasilkan dari validasi server/backend. |\n\nDeskripsi Field `errors`:\n\n| Nama Field | Tipe Data | Deskripsi |\n| --- | --- | --- |\n| nama_kolom | array | Kumpulan pesan error berbentuk \\`string\\` yang disimpan dalam array. |"
+							},
+							"response": [
+								{
+									"name": "success",
+									"originalRequest": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "application/json",
+												"type": "text"
+											}
+										],
+										"url": {
+											"raw": "/admin/vendor?query=&limit=10&offset=0",
+											"path": [
+												"admin",
+												"vendor"
+											],
+											"query": [
+												{
+													"key": "query",
+													"value": ""
+												},
+												{
+													"key": "limit",
+													"value": "10"
+												},
+												{
+													"key": "offset",
+													"value": "0"
+												}
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Host",
+											"value": "127.0.0.1:8000"
+										},
+										{
+											"key": "Connection",
+											"value": "close"
+										},
+										{
+											"key": "X-Powered-By",
+											"value": "PHP/8.4.10"
+										},
+										{
+											"key": "Cache-Control",
+											"value": "no-cache, private"
+										},
+										{
+											"key": "Date",
+											"value": "Sat, 12 Jul 2025 23:04:14 GMT"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										},
+										{
+											"key": "Access-Control-Allow-Origin",
+											"value": "*"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"status\": \"success\",\n    \"message\": \"Data berhasil ditarik\",\n    \"data\": {\n        \"total\": 2,\n        \"totalFiltered\": 2,\n        \"data\": [\n            {\n                \"id\": 1,\n                \"name\": \"PT Jakarta Propertindo\",\n                \"website\": \"http://jakpro.com\",\n                \"founded_at\": \"2010\",\n                \"user_id\": 1,\n                \"user_name\": \"Ghivarra Senandika Rushdie\"\n            },\n            {\n                \"id\": 2,\n                \"name\": \"PT Jakarta Runnerindo\",\n                \"website\": \"http://website.com\",\n                \"founded_at\": \"2020\",\n                \"user_id\": 1,\n                \"user_name\": \"Ghivarra Senandika Rushdie\"\n            }\n        ]\n    }\n}"
+								},
+								{
+									"name": "failed",
+									"originalRequest": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "application/json",
+												"type": "text"
+											}
+										],
+										"url": {
+											"raw": "/admin/vendor?query=&limit=25&offset=0",
+											"path": [
+												"admin",
+												"vendor"
+											],
+											"query": [
+												{
+													"key": "query",
+													"value": ""
+												},
+												{
+													"key": "limit",
+													"value": "25"
+												},
+												{
+													"key": "offset",
+													"value": "0"
+												}
+											]
+										}
+									},
+									"status": "Bad Request",
+									"code": 400,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Host",
+											"value": "127.0.0.1:8000"
+										},
+										{
+											"key": "Connection",
+											"value": "close"
+										},
+										{
+											"key": "X-Powered-By",
+											"value": "PHP/8.4.10"
+										},
+										{
+											"key": "Cache-Control",
+											"value": "no-cache, private"
+										},
+										{
+											"key": "Date",
+											"value": "Sat, 12 Jul 2025 23:04:33 GMT"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										},
+										{
+											"key": "Access-Control-Allow-Origin",
+											"value": "*"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"status\": \"error\",\n    \"message\": \"Gagal menarik data vendor\",\n    \"data\": {\n        \"errors\": {\n            \"limit\": [\n                \"Kolom limit tidak boleh lebih dari 20.\"\n            ]\n        }\n    }\n}"
+								}
+							]
+						},
+						{
+							"name": "Find Specific Vendor",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/admin/vendor/find?id=1",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"admin",
+										"vendor",
+										"find"
+									],
+									"query": [
+										{
+											"key": "id",
+											"value": "1",
+											"description": "ID vendor"
+										}
+									]
+								},
+								"description": "## Find Specific Vendor\n\nEndpoint untuk mengakses data vendor secara spesifik.\n\n### **Format Header**\n\n| Key | Value |\n| --- | --- |\n| Authorization | Bearer Token |\n\n### Format Request\n\n- **Method**: GET\n    \n- **Endpoint**: `/api/admin/vendor/find`\n    \n- **Content-Type**: application/json\n    \n- **Body Format:** GET Query Params\n    \n- **Request Body**: GET Query memiliki parameter sebagai berikut:\n    \n\n| Nama Field | Tipe Data | Wajib / Required | Deskripsi |\n| --- | --- | --- | --- |\n| id | integer | ya | ID vendor yang datanya ingin diakses |\n\n### **Contoh Response**\n\n- **Sukses / Success**\n    \n\n``` json\n{\n    \"status\": \"success\",\n    \"message\": \"Data berhasil ditarik\",\n    \"data\": {\n        \"id\": 1,\n        \"name\": \"PT Jakarta Propertindo\",\n        \"website\": \"http://jakpro.com\",\n        \"founded_at\": \"2010\",\n        \"user_id\": 1,\n        \"user_name\": \"Ghivarra Senandika Rushdie\"\n    }\n}\n\n ```\n\nPenjelasan response:\n\n| Nama Field | Tipe Data | Deskripsi |\n| --- | --- | --- |\n| status | string | Status request yang dikirim oleh server. Value dari field ini selalu diantara \"success\" atau \"error\". |\n| message | string | Pesan penjelasan secara literal dari server. |\n| data | object | Kumpulan data. (single) |\n\nDeskripsi Field `data`:\n\n| Nama Field | Tipe Data | Deskripsi |\n| --- | --- | --- |\n| id | integer | ID vendor. |\n| name | string | Nama vendor. |\n| website | string | Nama website vendor. |\n| founded_at | year | Tahun perusahaan vendor berdiri. |\n| user_id | integer | ID akun user pemilik/pengelola vendor. |\n| user_name | string | Nama akun user pemilik/pengelola vendor. |\n\n- **Gagal / Failed / Error**\n    \n\n``` json\n{\n    \"status\": \"error\",\n    \"message\": \"Gagal menarik data vendor, ID tidak valid\",\n    \"data\": {\n        \"errors\": {\n            \"id\": [\n                \"Gagal menarik data vendor, ID tidak valid\"\n            ]\n        }\n    }\n}\n\n ```\n\nJenis Error:\n\n| Kode | Message | Deskripsi |\n| --- | --- | --- |\n| 401 | Unauthorized | Token sudah kadaluwarsa atau otorisasi tidak berhasil. |\n| 422 | Unprocessable Content | Ada kesalahan dalam pengisian atau kegagalan validasi form/input. |\n\nPenjelasan response:\n\n| Nama Field | Tipe Data | Deskripsi |\n| --- | --- | --- |\n| status | string | Status request yang dikirim oleh server. Value dari field ini selalu diantara \"success\" atau \"error\". |\n| message | string | Pesan penjelasan secara literal dari server. |\n| data | object | Kumpulan data. (single) |\n\nDeskripsi Field `data`:\n\n| Nama Field | Tipe Data | Deskripsi |\n| --- | --- | --- |\n| errors | object | Kumpulan error yang dihasilkan dari validasi server/backend. |\n\nDeskripsi Field `errors`:\n\n| Nama Field | Tipe Data | Deskripsi |\n| --- | --- | --- |\n| nama_kolom | array | Kumpulan pesan error berbentuk \\`string\\` yang disimpan dalam array. |"
+							},
+							"response": [
+								{
+									"name": "success",
+									"originalRequest": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "application/json",
+												"type": "text"
+											}
+										],
+										"url": {
+											"raw": "/admin/vendor/find?id=1",
+											"path": [
+												"admin",
+												"vendor",
+												"find"
+											],
+											"query": [
+												{
+													"key": "id",
+													"value": "1"
+												}
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Host",
+											"value": "127.0.0.1:8000"
+										},
+										{
+											"key": "Connection",
+											"value": "close"
+										},
+										{
+											"key": "X-Powered-By",
+											"value": "PHP/8.4.10"
+										},
+										{
+											"key": "Cache-Control",
+											"value": "no-cache, private"
+										},
+										{
+											"key": "Date",
+											"value": "Sat, 12 Jul 2025 23:03:13 GMT"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										},
+										{
+											"key": "Access-Control-Allow-Origin",
+											"value": "*"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"status\": \"success\",\n    \"message\": \"Data berhasil ditarik\",\n    \"data\": {\n        \"id\": 1,\n        \"name\": \"PT Jakarta Propertindo\",\n        \"website\": \"http://jakpro.com\",\n        \"founded_at\": \"2010\",\n        \"user_id\": 1,\n        \"user_name\": \"Ghivarra Senandika Rushdie\"\n    }\n}"
+								},
+								{
+									"name": "failed",
+									"originalRequest": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "application/json",
+												"type": "text"
+											}
+										],
+										"url": {
+											"raw": "{{base_url_api}}/admin/vendor/find?id=17a",
+											"host": [
+												"{{base_url_api}}"
+											],
+											"path": [
+												"admin",
+												"vendor",
+												"find"
+											],
+											"query": [
+												{
+													"key": "id",
+													"value": "17a"
+												}
+											]
+										}
+									},
+									"status": "Unprocessable Content",
+									"code": 422,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Host",
+											"value": "127.0.0.1:8000"
+										},
+										{
+											"key": "Connection",
+											"value": "close"
+										},
+										{
+											"key": "X-Powered-By",
+											"value": "PHP/8.4.10"
+										},
+										{
+											"key": "Cache-Control",
+											"value": "no-cache, private"
+										},
+										{
+											"key": "Date",
+											"value": "Sat, 12 Jul 2025 23:03:50 GMT"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										},
+										{
+											"key": "Access-Control-Allow-Origin",
+											"value": "*"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"status\": \"error\",\n    \"message\": \"Gagal menarik data vendor, ID tidak valid\"\n}"
+								}
+							]
+						},
+						{
+							"name": "Create Vendor",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "Origin",
+										"value": "{{base_url}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "name",
+											"value": "PT Abadi Jaya Indonesia",
+											"description": "Nama Vendor",
+											"type": "text"
+										},
+										{
+											"key": "website",
+											"value": "website.com",
+											"description": "Website Vendor",
+											"type": "text"
+										},
+										{
+											"key": "founded_at",
+											"value": "2020",
+											"description": "Tahun Vendor berdiri",
+											"type": "text"
+										}
+									]
+								},
+								"url": "{{base_url}}/api/admin/vendor/create",
+								"description": "## Create Vendor\n\nEndpoint untuk membuat vendor baru.\n\n### **Format Header**\n\n| Key | Value |\n| --- | --- |\n| Authorization | Bearer Token |\n\n### Format Request\n\n- **Method**: POST\n    \n- **Endpoint**: `/api/admin/vendor/create`\n    \n- **Content-Type**: application/json\n    \n- **Body Format:** multipart/form-data\n    \n- **Request Body**: Body memiliki form dengan parameter sebagai berikut:\n    \n\n| Nama Field | Tipe Data | Wajib / Required | Deskripsi |\n| --- | --- | --- | --- |\n| name | string | Ya | Nama vendor. |\n| website | string | Ya | Nama website vendor. |\n| founded_at | year | Ya | Tahun perusahaan vendor berdiri. |\n\n### **Contoh Response**\n\n- **Sukses / Success**\n    \n\n``` json\n{\n    \"status\": \"success\",\n    \"message\": \"Vendor PT Jakarta Runnerindo berhasil ditambahkan\",\n    \"data\": {\n        \"id\": 2,\n        \"name\": \"PT Jakarta Runnerindo\",\n        \"website\": \"http://website.com\",\n        \"founded_at\": \"2020\",\n        \"user_id\": 1,\n        \"updated_at\": \"2025-07-12T23:01:32.000000Z\",\n        \"created_at\": \"2025-07-12T23:01:32.000000Z\"        \n    }\n}\n\n ```\n\nPenjelasan response:\n\n| Nama Field | Tipe Data | Deskripsi |\n| --- | --- | --- |\n| status | string | Status request yang dikirim oleh server. Value dari field ini selalu diantara \"success\" atau \"error\". |\n| message | string | Pesan penjelasan secara literal dari server. |\n| data | array | Kumpulan data. (single) |\n\nDeskripsi Field `data`:\n\n| Nama Field | Tipe Data | Deskripsi |\n| --- | --- | --- |\n| id | integer | ID vendor yang baru dibuat. |\n| name | string | Nama vendor. |\n| website | string | Nama website vendor. |\n| founded_at | year | Tahun perusahaan vendor berdiri. |\n| user_id | integer | ID akun user pemilik/pengelola vendor. |\n| created_at | timestamp | Waktu item dibuat. |\n| updated_at | timestamp | Waktu terakhir item diupdate. |\n\n- **Gagal / Failed / Error**\n    \n\n``` json\n{\n    \"status\": \"error\",\n    \"message\": \"Gagal menarik data vendor\",\n    \"data\": {\n        \"errors\": {\n            \"limit\": [\n                \"Kolom limit tidak boleh lebih dari 20.\"\n            ]\n        }\n    }\n}\n\n ```\n\nJenis Error:\n\n| Kode | Message | Deskripsi |\n| --- | --- | --- |\n| 401 | Unauthorized | Token sudah kadaluwarsa atau otorisasi tidak berhasil. |\n| 422 | Unprocessable Content | Ada kesalahan dalam pengisian atau kegagalan validasi form/input. |\n| 503 | Server Unavailable | Server sedang sibuk. |\n\nPenjelasan response:\n\n| Nama Field | Tipe Data | Deskripsi |\n| --- | --- | --- |\n| status | string | Status request yang dikirim oleh server. Value dari field ini selalu diantara \"success\" atau \"error\". |\n| message | string | Pesan penjelasan secara literal dari server. |\n| data | object | Kumpulan data. (single) |\n\nDeskripsi Field `data`:\n\n| Nama Field | Tipe Data | Deskripsi |\n| --- | --- | --- |\n| errors | object | Kumpulan error yang dihasilkan dari validasi server/backend. |\n\nDeskripsi Field `errors`:\n\n| Nama Field | Tipe Data | Deskripsi |\n| --- | --- | --- |\n| nama_kolom | array | Kumpulan pesan error berbentuk \\`string\\` yang disimpan dalam array. |"
+							},
+							"response": [
+								{
+									"name": "success",
+									"originalRequest": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "application/json",
+												"type": "text"
+											},
+											{
+												"key": "Origin",
+												"value": "",
+												"type": "text"
+											}
+										],
+										"body": {
+											"mode": "formdata",
+											"formdata": [
+												{
+													"key": "name",
+													"value": "PT Jakarta Runnerindo",
+													"type": "text"
+												},
+												{
+													"key": "website",
+													"value": "website.com",
+													"type": "text"
+												},
+												{
+													"key": "founded_at",
+													"value": "2020",
+													"type": "text"
+												}
+											]
+										},
+										"url": "/admin/vendor/create"
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Host",
+											"value": "127.0.0.1:8000"
+										},
+										{
+											"key": "Connection",
+											"value": "close"
+										},
+										{
+											"key": "X-Powered-By",
+											"value": "PHP/8.4.10"
+										},
+										{
+											"key": "Cache-Control",
+											"value": "no-cache, private"
+										},
+										{
+											"key": "Date",
+											"value": "Sat, 12 Jul 2025 23:01:32 GMT"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										},
+										{
+											"key": "Access-Control-Allow-Origin",
+											"value": "*"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"status\": \"success\",\n    \"message\": \"Vendor PT Jakarta Runnerindo berhasil ditambahkan\",\n    \"data\": {\n        \"name\": \"PT Jakarta Runnerindo\",\n        \"website\": \"http://website.com\",\n        \"founded_at\": \"2020\",\n        \"user_id\": 1,\n        \"updated_at\": \"2025-07-12T23:01:32.000000Z\",\n        \"created_at\": \"2025-07-12T23:01:32.000000Z\",\n        \"id\": 2\n    }\n}"
+								},
+								{
+									"name": "failed",
+									"originalRequest": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "application/json",
+												"type": "text"
+											},
+											{
+												"key": "Origin",
+												"value": "",
+												"type": "text"
+											}
+										],
+										"body": {
+											"mode": "formdata",
+											"formdata": [
+												{
+													"key": "name",
+													"value": "PT Abadi Jaya Indonesia",
+													"type": "text"
+												},
+												{
+													"key": "website",
+													"value": "websitecom",
+													"type": "text"
+												},
+												{
+													"key": "founded_at",
+													"value": "2020a",
+													"type": "text"
+												}
+											]
+										},
+										"url": "/admin/vendor/create"
+									},
+									"status": "Unprocessable Content",
+									"code": 422,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Host",
+											"value": "127.0.0.1:8000"
+										},
+										{
+											"key": "Connection",
+											"value": "close"
+										},
+										{
+											"key": "X-Powered-By",
+											"value": "PHP/8.4.10"
+										},
+										{
+											"key": "Cache-Control",
+											"value": "no-cache, private"
+										},
+										{
+											"key": "Date",
+											"value": "Sat, 12 Jul 2025 23:01:56 GMT"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										},
+										{
+											"key": "Access-Control-Allow-Origin",
+											"value": "*"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"status\": \"error\",\n    \"message\": \"Gagal membuat vendor\",\n    \"data\": {\n        \"errors\": {\n            \"founded_at\": [\n                \"Kolom Tahun Berdiri harus sesuai dengan format Y.\"\n            ]\n        }\n    }\n}"
+								}
+							]
+						},
+						{
+							"name": "Update Vendor",
+							"request": {
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "Origin",
+										"value": "{{base_url}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"id\": 1,\n    \"name\": \"PT Jakarta Propertindo\",\n    \"website\": \"jakpro.com\",\n    \"founded_at\": 2010\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": "{{base_url}}/api/admin/vendor/update",
+								"description": "## Update Vendor\n\nEndpoint untuk memperbaharui data vendor.\n\n### **Format Header**\n\n| Key | Value |\n| --- | --- |\n| Authorization | Bearer Token |\n\n### Format Request\n\n- **Method**: PATCH\n    \n- **Endpoint**: `/api/admin/vendor/update`\n    \n- **Content-Type**: application/json\n    \n- **Body Format:** application/json\n    \n- **Request Body**: Body memiliki parameter sebagai berikut:\n    \n\n| Nama Field | Tipe Data | Wajib / Required | Deskripsi |\n| --- | --- | --- | --- |\n| id | integer | Ya | ID vendor yang datanya akan diupdate. |\n| name | string | Ya | Nama vendor. |\n| website | string | Ya | Nama website vendor. |\n| founded_at | year | Ya | Tahun perusahaan vendor berdiri. |\n\n### **Contoh Response**\n\n- **Sukses / Success**\n    \n\n``` json\n{\n    \"status\": \"success\",\n    \"message\": \"Data vendor PT Jakarta Propertindo berhasil diperbaharui\",\n    \"data\": {\n        \"id\": 1,\n        \"name\": \"PT Jakarta Propertindo\",\n        \"website\": \"http://jakpro.com\",\n        \"founded_at\": 2010,\n        \"user_id\": 1,\n        \"created_at\": \"2025-07-12T23:01:06.000000Z\",\n        \"updated_at\": \"2025-07-12T23:02:31.000000Z\",\n        \"deleted_at\": null\n    }\n}\n\n ```\n\nPenjelasan response:\n\n| Nama Field | Tipe Data | Deskripsi |\n| --- | --- | --- |\n| status | string | Status request yang dikirim oleh server. Value dari field ini selalu diantara \"success\" atau \"error\". |\n| message | string | Pesan penjelasan secara literal dari server. |\n| data | array | Kumpulan data. (single) |\n\nDeskripsi Field `data`:\n\n| Nama Field | Tipe Data | Deskripsi |\n| --- | --- | --- |\n| id | integer | ID vendor. |\n| name | string | Nama vendor. |\n| website | string | Nama website vendor. |\n| founded_at | year | Tahun perusahaan vendor berdiri. |\n| user_id | integer | ID akun user pemilik/pengelola vendor. |\n| created_at | timestamp | Waktu vendor dibuat. |\n| updated_at | timestamp | Waktu terakhir vendor diupdate. |\n| deleted_at | timestamp | Kolom soft-delete, bila `null` artinya data masih aktif |\n\n- **Gagal / Failed / Error**\n    \n\n``` json\n{\n    \"status\": \"error\",\n    \"message\": \"Gagal memperbaharui data vendor\",\n    \"data\": {\n        \"errors\": {\n            \"id\": [\n                \"Vendor yang dipilih tidak valid.\"\n            ]\n        }\n    }\n}\n\n ```\n\nJenis Error:\n\n| Kode | Message | Deskripsi |\n| --- | --- | --- |\n| 401 | Unauthorized | Token sudah kadaluwarsa atau otorisasi tidak berhasil. |\n| 403 | Forbidden | Anda tidak memiliki izin untuk mengupdate data item. |\n| 422 | Unprocessable Content | Ada kesalahan dalam pengisian atau kegagalan validasi form/input. |\n| 503 | Service Unavailable | Server sedang sibuk. |\n\nPenjelasan response:\n\n| Nama Field | Tipe Data | Deskripsi |\n| --- | --- | --- |\n| status | string | Status request yang dikirim oleh server. Value dari field ini selalu diantara \"success\" atau \"error\". |\n| message | string | Pesan penjelasan secara literal dari server. |\n| data | object | Kumpulan data. (single) |\n\nDeskripsi Field `data`:\n\n| Nama Field | Tipe Data | Deskripsi |\n| --- | --- | --- |\n| errors | object | Kumpulan error yang dihasilkan dari validasi server/backend. |\n\nDeskripsi Field `errors`:\n\n| Nama Field | Tipe Data | Deskripsi |\n| --- | --- | --- |\n| nama_kolom | array | Kumpulan pesan error berbentuk \\`string\\` yang disimpan dalam array. |"
+							},
+							"response": [
+								{
+									"name": "success",
+									"originalRequest": {
+										"method": "PATCH",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "application/json",
+												"type": "text"
+											},
+											{
+												"key": "Origin",
+												"value": "",
+												"type": "text"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"id\": 1,\n    \"name\": \"PT Jakarta Propertindo\",\n    \"website\": \"jakpro.com\",\n    \"founded_at\": 2010\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": "/admin/vendor/update"
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Host",
+											"value": "127.0.0.1:8000"
+										},
+										{
+											"key": "Connection",
+											"value": "close"
+										},
+										{
+											"key": "X-Powered-By",
+											"value": "PHP/8.4.10"
+										},
+										{
+											"key": "Cache-Control",
+											"value": "no-cache, private"
+										},
+										{
+											"key": "Date",
+											"value": "Sat, 12 Jul 2025 23:02:31 GMT"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										},
+										{
+											"key": "Access-Control-Allow-Origin",
+											"value": "*"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"status\": \"success\",\n    \"message\": \"Data vendor PT Jakarta Propertindo berhasil diperbaharui\",\n    \"data\": {\n        \"id\": 1,\n        \"name\": \"PT Jakarta Propertindo\",\n        \"website\": \"http://jakpro.com\",\n        \"founded_at\": 2010,\n        \"user_id\": 1,\n        \"created_at\": \"2025-07-12T23:01:06.000000Z\",\n        \"updated_at\": \"2025-07-12T23:02:31.000000Z\",\n        \"deleted_at\": null\n    }\n}"
+								},
+								{
+									"name": "failed",
+									"originalRequest": {
+										"method": "PATCH",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "application/json",
+												"type": "text"
+											},
+											{
+												"key": "Origin",
+												"value": "",
+												"type": "text"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"id\": 12,\n    \"name\": \"PT Jakarta Propertindo\",\n    \"website\": \"jakpro.com\",\n    \"founded_at\": 2010\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": "/admin/vendor/update"
+									},
+									"status": "Unprocessable Content",
+									"code": 422,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Host",
+											"value": "127.0.0.1:8000"
+										},
+										{
+											"key": "Connection",
+											"value": "close"
+										},
+										{
+											"key": "X-Powered-By",
+											"value": "PHP/8.4.10"
+										},
+										{
+											"key": "Cache-Control",
+											"value": "no-cache, private"
+										},
+										{
+											"key": "Date",
+											"value": "Sat, 12 Jul 2025 23:02:52 GMT"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										},
+										{
+											"key": "Access-Control-Allow-Origin",
+											"value": "*"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"status\": \"error\",\n    \"message\": \"Gagal memperbaharui data vendor\",\n    \"data\": {\n        \"errors\": {\n            \"id\": [\n                \"Vendor yang dipilih tidak valid.\"\n            ]\n        }\n    }\n}"
+								}
+							]
+						},
+						{
+							"name": "Delete Vendor",
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "Origin",
+										"value": "{{base_url}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": []
+								},
+								"url": {
+									"raw": "{{base_url}}/api/admin/vendor/delete?id=1",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"admin",
+										"vendor",
+										"delete"
+									],
+									"query": [
+										{
+											"key": "id",
+											"value": "1"
+										}
+									]
+								},
+								"description": "## Delete Vendor\n\nEndpoint untuk menghapus vendor.\n\n### **Format Header**\n\n| Key | Value |\n| --- | --- |\n| Authorization | Bearer Token |\n\n### Format Request\n\n- **Method**: DELETE\n    \n- **Endpoint**: `/api/admin/vendor/delete`\n    \n- **Content-Type**: application/json\n    \n- **Body Format:** GET Query\n    \n- **Request Body**: GET Query memiliki parameter sebagai berikut:\n    \n\n| Nama Field | Tipe Data | Wajib / Required | Deskripsi |\n| --- | --- | --- | --- |\n| id | integer | Ya | ID vendor yang akan dihapus. |\n\n### **Contoh Response**\n\n- **Sukses / Success**\n    \n\n``` json\n{\n    \"status\": \"success\",\n    \"message\": \"Vendor PT Jakarta Propertindo berhasil dihapus\"\n}\n\n ```\n\nPenjelasan response:\n\n| Nama Field | Tipe Data | Deskripsi |\n| --- | --- | --- |\n| status | string | Status request yang dikirim oleh server. Value dari field ini selalu diantara \"success\" atau \"error\". |\n| message | string | Pesan penjelasan secara literal dari server. |\n\n- **Gagal / Failed / Error**\n    \n\n``` json\n{\n    \"status\": \"error\",\n    \"message\": \"Gagal menghapus vendor, ID tidak valid\",\n    \"data\": {\n        \"errors\": {\n            \"id\": [\n                \"Gagal menghapus vendor, ID tidak valid\"\n            ]\n        }\n    }\n}\n\n ```\n\nJenis Error:\n\n| Kode | Message | Deskripsi |\n| --- | --- | --- |\n| 401 | Unauthorized | Token sudah kadaluwarsa atau otorisasi tidak berhasil. |\n| 403 | Forbidden | Anda tidak diizinkan untuk menghapus item. |\n| 422 | Unprocessable Content | Ada kesalahan dalam pengisian atau kegagalan validasi form/input. |\n\nPenjelasan response:\n\n| Nama Field | Tipe Data | Deskripsi |\n| --- | --- | --- |\n| status | string | Status request yang dikirim oleh server. Value dari field ini selalu diantara \"success\" atau \"error\". |\n| message | string | Pesan penjelasan secara literal dari server. |\n| data | object | Kumpulan data. (single) |\n\nDeskripsi Field `data`:\n\n| Nama Field | Tipe Data | Deskripsi |\n| --- | --- | --- |\n| errors | object | Kumpulan error yang dihasilkan dari validasi server/backend. |\n\nDeskripsi Field `errors`:\n\n| Nama Field | Tipe Data | Deskripsi |\n| --- | --- | --- |\n| nama_kolom | array | Kumpulan pesan error berbentuk \\`string\\` yang disimpan dalam array. |"
+							},
+							"response": [
+								{
+									"name": "success",
+									"originalRequest": {
+										"method": "DELETE",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "application/json",
+												"type": "text"
+											},
+											{
+												"key": "Origin",
+												"value": "",
+												"type": "text"
+											}
+										],
+										"body": {
+											"mode": "formdata",
+											"formdata": []
+										},
+										"url": {
+											"raw": "/admin/vendor/delete?id=1",
+											"path": [
+												"admin",
+												"vendor",
+												"delete"
+											],
+											"query": [
+												{
+													"key": "id",
+													"value": "1"
+												}
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Host",
+											"value": "127.0.0.1:8000"
+										},
+										{
+											"key": "Connection",
+											"value": "close"
+										},
+										{
+											"key": "X-Powered-By",
+											"value": "PHP/8.4.10"
+										},
+										{
+											"key": "Cache-Control",
+											"value": "no-cache, private"
+										},
+										{
+											"key": "Date",
+											"value": "Sat, 12 Jul 2025 23:12:18 GMT"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										},
+										{
+											"key": "Access-Control-Allow-Origin",
+											"value": "*"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"status\": \"success\",\n    \"message\": \"Vendor PT Jakarta Propertindo berhasil dihapus\"\n}"
+								},
+								{
+									"name": "failed",
+									"originalRequest": {
+										"method": "DELETE",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "application/json",
+												"type": "text"
+											},
+											{
+												"key": "Origin",
+												"value": "{{base_url}}",
+												"type": "text"
+											}
+										],
+										"body": {
+											"mode": "formdata",
+											"formdata": []
+										},
+										"url": {
+											"raw": "{{base_url}}/api/admin/vendor/delete?id=100",
+											"host": [
+												"{{base_url}}"
+											],
+											"path": [
+												"api",
+												"admin",
+												"vendor",
+												"delete"
+											],
+											"query": [
+												{
+													"key": "id",
+													"value": "100"
+												}
+											]
+										}
+									},
+									"status": "Unprocessable Content",
+									"code": 422,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Host",
+											"value": "127.0.0.1:8000"
+										},
+										{
+											"key": "Connection",
+											"value": "close"
+										},
+										{
+											"key": "X-Powered-By",
+											"value": "PHP/8.4.10"
+										},
+										{
+											"key": "Cache-Control",
+											"value": "no-cache, private"
+										},
+										{
+											"key": "Date",
+											"value": "Sun, 13 Jul 2025 02:17:23 GMT"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										},
+										{
+											"key": "Access-Control-Allow-Origin",
+											"value": "*"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"status\": \"error\",\n    \"message\": \"Gagal menghapus vendor, ID tidak valid\",\n    \"data\": {\n        \"errors\": {\n            \"id\": [\n                \"Gagal menghapus vendor, ID tidak valid\"\n            ]\n        }\n    }\n}"
+								}
+							]
+						}
+					],
+					"description": "Kumpulan endpoint untuk melihat, membuat, modifikasi, dan menghapus vendor. Di antaranya:\n\n| Endpoint | Method | Deskripsi |\n| --- | --- | --- |\n| /api/admin/vendor | GET | Akses data vendor. (plural) |\n| /api/admin/vendor/find | GET | Akses data spesifik vendor. (singular) |\n| /api/admin/vendor/create | POST | Buat vendor baru. |\n| /api/admin/vendor/update | PATCH | Update data vendor. |\n| /api/admin/vendor/delete | DELETE | Hapus vendor. |"
+				},
+				{
+					"name": "Katalog",
+					"item": [
+						{
+							"name": "Get Catalog Index",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url_api}}/admin/catalog?query=&limit=10&offset=0",
+									"host": [
+										"{{base_url_api}}"
+									],
+									"path": [
+										"admin",
+										"catalog"
+									],
+									"query": [
+										{
+											"key": "vendor",
+											"value": "",
+											"disabled": true
+										},
+										{
+											"key": "query",
+											"value": ""
+										},
+										{
+											"key": "limit",
+											"value": "10"
+										},
+										{
+											"key": "offset",
+											"value": "0"
+										}
+									]
+								},
+								"description": "## Get Catalog Index\n\nEndpoint untuk mengakses kumpulan data katalog untuk keperluan indeks.\n\n### **Format Header**\n\n| Key | Value |\n| --- | --- |\n| Authorization | Bearer Token |\n\n### Format Request\n\n- **Method**: GET\n    \n- **Endpoint**: `/api/admin/catalog`\n    \n- **Content-Type**: application/json\n    \n- **Body Format:** GET Query Params\n    \n- **Request Body**: GET Query memiliki parameter sebagai berikut:\n    \n\n| Nama Field | Tipe Data | Wajib / Required | Deskripsi |\n| --- | --- | --- | --- |\n| limit | integer | Ya | Limit batas pencarian item. Maks. 20 item dalam satu kali pencarian. |\n| offset | integer | Ya | Offset penarikan data indeks item. |\n| query | string | Tidak | Keyword pencarian data indeks item. **(OPSIONAL)** |\n| vendor | integer | Tidak | ID vendor pemilik katalog **(OPSIONAL)** |\n\n### **Contoh Response**\n\n- **Sukses / Success**\n    \n\n``` json\n{\n    \"status\": \"success\",\n    \"message\": \"Data berhasil ditarik\",\n    \"data\": {\n        \"total\": 2,\n        \"totalFiltered\": 2,\n        \"data\": [\n            {\n                \"id\": 2,\n                \"uuid\": \"5ebc224c-7dc4-45fd-b155-6532facef498\",\n                \"title\": \"Perbaikan Jalan KM20\",\n                \"number\": \"007/NXNX/POKN/2025\",\n                \"location\": \"Jakarta Utara\",\n                \"qualification\": \"Semua Jasa Konstruksi\",\n                \"value\": 500000000,\n                \"vendor_id\": 2,\n                \"vendor_name\": \"PT Jakarta Runnerindo\",\n                \"register_date_start\": \"2025-08-01\",\n                \"register_date_end\": \"2025-08-31\",\n                \"created_at\": \"2025-07-12T23:14:03.000000Z\",\n                \"updated_at\": \"2025-07-12T23:17:17.000000Z\"\n            },\n            {\n                \"id\": 1,\n                \"uuid\": \"fb4e9e47-11f3-4a77-8305-c999ed3f8496\",\n                \"title\": \"Perbaikan Jembatan Jalan Raya\",\n                \"number\": \"007/NXNX/POKN/2025\",\n                \"location\": \"Jakarta Selatan\",\n                \"qualification\": \"Semua Non-Konstruksi\",\n                \"value\": 500000000,\n                \"vendor_id\": 2,\n                \"vendor_name\": \"PT Jakarta Runnerindo\",\n                \"register_date_start\": \"2025-08-01\",\n                \"register_date_end\": \"2025-08-31\",\n                \"created_at\": \"2025-07-12T23:13:23.000000Z\",\n                \"updated_at\": \"2025-07-12T23:13:23.000000Z\"\n            }\n        ]\n    }\n}\n\n ```\n\nPenjelasan response:\n\n| Nama Field | Tipe Data | Deskripsi |\n| --- | --- | --- |\n| status | string | Status request yang dikirim oleh server. Value dari field ini selalu diantara \"success\" atau \"error\". |\n| message | string | Pesan penjelasan secara literal dari server. |\n| data | array | Kumpulan data. (multiple) |\n\nDeskripsi Field `data`:\n\n| Nama Field | Tipe Data | Deskripsi |\n| --- | --- | --- |\n| id | integer | ID akun user yang baru dibuat. |\n| uuid | string | UUID yang digunakan sebagai URI pada URL. |\n| title | string | Nama/Judul katalog. |\n| number | string | Nomor katalog. |\n| kualifikasi | string | Kualifikasi penyedia layanan/jasa. |\n| value | integer | Nilai HPS katalog. |\n| vendor_id | integer | ID vendor pemilik katalog. |\n| vendor_name | string | Nama vendor pemilik katalog. |\n| register_date_start | date | Tanggal mulai pendaftaran |\n| register_date_end | date | Tanggal selesai pendaftaran |\n| created_at | timestamp | Waktu katalog dibuat |\n| updated_at | timestamp | Waktu terakhir katalog diupdate |\n\n- **Gagal / Failed / Error**\n    \n\n``` json\n{\n    \"status\": \"error\",\n    \"message\": \"Gagal menarik data vendor\",\n    \"data\": {\n        \"errors\": {\n            \"vendor\": [\n                \"vendor yang dipilih tidak valid.\"\n            ]\n        }\n    }\n}\n\n ```\n\nJenis Error:\n\n| Kode | Message | Deskripsi |\n| --- | --- | --- |\n| 401 | Unauthorized | Token sudah kadaluwarsa atau otorisasi tidak berhasil. |\n| 422 | Unprocessable Content | Ada kesalahan dalam pengisian atau kegagalan validasi form/input. |\n\nPenjelasan response:\n\n| Nama Field | Tipe Data | Deskripsi |\n| --- | --- | --- |\n| status | string | Status request yang dikirim oleh server. Value dari field ini selalu diantara \"success\" atau \"error\". |\n| message | string | Pesan penjelasan secara literal dari server. |\n| data | object | Kumpulan data. (single) |\n\nDeskripsi Field `data`:\n\n| Nama Field | Tipe Data | Deskripsi |\n| --- | --- | --- |\n| errors | object | Kumpulan error yang dihasilkan dari validasi server/backend. |\n\nDeskripsi Field `errors`:\n\n| Nama Field | Tipe Data | Deskripsi |\n| --- | --- | --- |\n| nama_kolom | array | Kumpulan pesan error berbentuk \\`string\\` yang disimpan dalam array. |"
+							},
+							"response": [
+								{
+									"name": "success - get all",
+									"originalRequest": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "application/json",
+												"type": "text"
+											}
+										],
+										"url": {
+											"raw": "{{base_url_api}}/admin/catalog?query=&limit=10&offset=0",
+											"host": [
+												"{{base_url_api}}"
+											],
+											"path": [
+												"admin",
+												"catalog"
+											],
+											"query": [
+												{
+													"key": "vendor",
+													"value": "",
+													"disabled": true
+												},
+												{
+													"key": "query",
+													"value": ""
+												},
+												{
+													"key": "limit",
+													"value": "10"
+												},
+												{
+													"key": "offset",
+													"value": "0"
+												}
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Host",
+											"value": "127.0.0.1:8000"
+										},
+										{
+											"key": "Connection",
+											"value": "close"
+										},
+										{
+											"key": "X-Powered-By",
+											"value": "PHP/8.4.10"
+										},
+										{
+											"key": "Cache-Control",
+											"value": "no-cache, private"
+										},
+										{
+											"key": "Date",
+											"value": "Sat, 12 Jul 2025 23:21:12 GMT"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										},
+										{
+											"key": "Access-Control-Allow-Origin",
+											"value": "*"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"status\": \"success\",\n    \"message\": \"Data berhasil ditarik\",\n    \"data\": {\n        \"total\": 2,\n        \"totalFiltered\": 2,\n        \"data\": [\n            {\n                \"id\": 2,\n                \"uuid\": \"5ebc224c-7dc4-45fd-b155-6532facef498\",\n                \"title\": \"Perbaikan Jalan KM20\",\n                \"number\": \"007/NXNX/POKN/2025\",\n                \"location\": \"Jakarta Utara\",\n                \"qualification\": \"Semua Jasa Konstruksi\",\n                \"value\": 500000000,\n                \"vendor_id\": 2,\n                \"vendor_name\": \"PT Jakarta Runnerindo\",\n                \"register_date_start\": \"2025-08-01\",\n                \"register_date_end\": \"2025-08-31\",\n                \"created_at\": \"2025-07-12T23:14:03.000000Z\",\n                \"updated_at\": \"2025-07-12T23:17:17.000000Z\"\n            },\n            {\n                \"id\": 1,\n                \"uuid\": \"fb4e9e47-11f3-4a77-8305-c999ed3f8496\",\n                \"title\": \"Perbaikan Jembatan Jalan Raya\",\n                \"number\": \"007/NXNX/POKN/2025\",\n                \"location\": \"Jakarta Selatan\",\n                \"qualification\": \"Semua Non-Konstruksi\",\n                \"value\": 500000000,\n                \"vendor_id\": 2,\n                \"vendor_name\": \"PT Jakarta Runnerindo\",\n                \"register_date_start\": \"2025-08-01\",\n                \"register_date_end\": \"2025-08-31\",\n                \"created_at\": \"2025-07-12T23:13:23.000000Z\",\n                \"updated_at\": \"2025-07-12T23:13:23.000000Z\"\n            }\n        ]\n    }\n}"
+								},
+								{
+									"name": "success - get specific",
+									"originalRequest": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "application/json",
+												"type": "text"
+											}
+										],
+										"url": {
+											"raw": "{{base_url_api}}/admin/catalog?vendor=2&query=&limit=10&offset=0",
+											"host": [
+												"{{base_url_api}}"
+											],
+											"path": [
+												"admin",
+												"catalog"
+											],
+											"query": [
+												{
+													"key": "vendor",
+													"value": "2"
+												},
+												{
+													"key": "query",
+													"value": ""
+												},
+												{
+													"key": "limit",
+													"value": "10"
+												},
+												{
+													"key": "offset",
+													"value": "0"
+												}
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Host",
+											"value": "127.0.0.1:8000"
+										},
+										{
+											"key": "Connection",
+											"value": "close"
+										},
+										{
+											"key": "X-Powered-By",
+											"value": "PHP/8.4.10"
+										},
+										{
+											"key": "Cache-Control",
+											"value": "no-cache, private"
+										},
+										{
+											"key": "Date",
+											"value": "Sat, 12 Jul 2025 23:21:53 GMT"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										},
+										{
+											"key": "Access-Control-Allow-Origin",
+											"value": "*"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"status\": \"success\",\n    \"message\": \"Data berhasil ditarik\",\n    \"data\": {\n        \"total\": 2,\n        \"totalFiltered\": 2,\n        \"data\": [\n            {\n                \"id\": 2,\n                \"uuid\": \"5ebc224c-7dc4-45fd-b155-6532facef498\",\n                \"title\": \"Perbaikan Jalan KM20\",\n                \"number\": \"007/NXNX/POKN/2025\",\n                \"location\": \"Jakarta Utara\",\n                \"qualification\": \"Semua Jasa Konstruksi\",\n                \"value\": 500000000,\n                \"vendor_id\": 2,\n                \"vendor_name\": \"PT Jakarta Runnerindo\",\n                \"register_date_start\": \"2025-08-01\",\n                \"register_date_end\": \"2025-08-31\",\n                \"created_at\": \"2025-07-12T23:14:03.000000Z\",\n                \"updated_at\": \"2025-07-12T23:17:17.000000Z\"\n            },\n            {\n                \"id\": 1,\n                \"uuid\": \"fb4e9e47-11f3-4a77-8305-c999ed3f8496\",\n                \"title\": \"Perbaikan Jembatan Jalan Raya\",\n                \"number\": \"007/NXNX/POKN/2025\",\n                \"location\": \"Jakarta Selatan\",\n                \"qualification\": \"Semua Non-Konstruksi\",\n                \"value\": 500000000,\n                \"vendor_id\": 2,\n                \"vendor_name\": \"PT Jakarta Runnerindo\",\n                \"register_date_start\": \"2025-08-01\",\n                \"register_date_end\": \"2025-08-31\",\n                \"created_at\": \"2025-07-12T23:13:23.000000Z\",\n                \"updated_at\": \"2025-07-12T23:13:23.000000Z\"\n            }\n        ]\n    }\n}"
+								},
+								{
+									"name": "failed",
+									"originalRequest": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "application/json",
+												"type": "text"
+											}
+										],
+										"url": {
+											"raw": "{{base_url_api}}/admin/catalog?vendor=0&query=&limit=10&offset=0",
+											"host": [
+												"{{base_url_api}}"
+											],
+											"path": [
+												"admin",
+												"catalog"
+											],
+											"query": [
+												{
+													"key": "vendor",
+													"value": "0"
+												},
+												{
+													"key": "query",
+													"value": ""
+												},
+												{
+													"key": "limit",
+													"value": "10"
+												},
+												{
+													"key": "offset",
+													"value": "0"
+												}
+											]
+										}
+									},
+									"status": "Bad Request",
+									"code": 400,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Host",
+											"value": "127.0.0.1:8000"
+										},
+										{
+											"key": "Connection",
+											"value": "close"
+										},
+										{
+											"key": "X-Powered-By",
+											"value": "PHP/8.4.10"
+										},
+										{
+											"key": "Cache-Control",
+											"value": "no-cache, private"
+										},
+										{
+											"key": "Date",
+											"value": "Sat, 12 Jul 2025 23:22:09 GMT"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										},
+										{
+											"key": "Access-Control-Allow-Origin",
+											"value": "*"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"status\": \"error\",\n    \"message\": \"Gagal menarik data vendor\",\n    \"data\": {\n        \"errors\": {\n            \"vendor\": [\n                \"vendor yang dipilih tidak valid.\"\n            ]\n        }\n    }\n}"
+								}
+							]
+						},
+						{
+							"name": "Find Specific Catalog",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url_api}}/admin/catalog/find?id=1",
+									"host": [
+										"{{base_url_api}}"
+									],
+									"path": [
+										"admin",
+										"catalog",
+										"find"
+									],
+									"query": [
+										{
+											"key": "id",
+											"value": "1"
+										}
+									]
+								},
+								"description": "## Find Specific Catalog\n\nEndpoint untuk mengakses data katalog secara spesifik.\n\n### **Format Header**\n\n| Key | Value |\n| --- | --- |\n| Authorization | Bearer Token |\n\n### Format Request\n\n- **Method**: GET\n    \n- **Endpoint**: `/api/admin/catalog/find`\n    \n- **Content-Type**: application/json\n    \n- **Body Format:** GET Query Params\n    \n- **Request Body**: GET Query memiliki parameter sebagai berikut:\n    \n\n| Nama Field | Tipe Data | Wajib / Required | Deskripsi |\n| --- | --- | --- | --- |\n| id | integer | ya | ID catalog yang datanya ingin diakses |\n\n### **Contoh Response**\n\n- **Sukses / Success**\n    \n\n``` json\n{\n    \"status\": \"success\",\n    \"message\": \"Data berhasil ditarik\",\n    \"data\": {\n        \"id\": 1,\n        \"uuid\": \"fb4e9e47-11f3-4a77-8305-c999ed3f8496\",\n        \"title\": \"Perbaikan Jembatan Jalan Raya\",\n        \"number\": \"007/NXNX/POKN/2025\",\n        \"method\": \"Pelelangan dengan Pasca Kualifikasi\",\n        \"location\": \"Jakarta Selatan\",\n        \"qualification\": \"Semua Non-Konstruksi\",\n        \"value\": 500000000,\n        \"vendor_id\": 2,\n        \"vendor_name\": \"PT Jakarta Runnerindo\",\n        \"description\": \"adsad\",\n        \"register_date_start\": \"2025-08-01\",\n        \"register_date_end\": \"2025-08-31\",\n        \"created_at\": \"2025-07-12T23:13:23.000000Z\",\n        \"updated_at\": \"2025-07-12T23:13:23.000000Z\",\n        \"subfields_collection\": [\n            {\n                \"catalog_id\": 1,\n                \"field_id\": 1,\n                \"field_name\": \"Konstruksi - Jasa Pelaksana\",\n                \"subfield_id\": 1,\n                \"subfield_name\": \"Pelaksana konstruksi jalan raya dan rel kereta api\"\n            },\n            {\n                \"catalog_id\": 1,\n                \"field_id\": 1,\n                \"field_name\": \"Konstruksi - Jasa Pelaksana\",\n                \"subfield_id\": 2,\n                \"subfield_name\": \"Pelaksana konstruksi bangunan jenis rumah hunian\"\n            }\n        ]\n    }\n}\n\n ```\n\nPenjelasan response:\n\n| Nama Field | Tipe Data | Deskripsi |\n| --- | --- | --- |\n| status | string | Status request yang dikirim oleh server. Value dari field ini selalu diantara \"success\" atau \"error\". |\n| message | string | Pesan penjelasan secara literal dari server. |\n| data | object | Kumpulan data. (single) |\n\nDeskripsi Field `data`:\n\n| Nama Field | Tipe Data | Deskripsi |\n| --- | --- | --- |\n| id | integer | ID akun user yang baru dibuat. |\n| uuid | string | UUID yang digunakan sebagai URI pada URL. |\n| title | string | Nama/Judul katalog. |\n| number | string | Nomor katalog. |\n| kualifikasi | string | Kualifikasi penyedia layanan/jasa. |\n| location | string | Lokasi katalog. |\n| value | integer | Nilai HPS katalog. |\n| vendor_id | integer | ID vendor pemilik katalog. |\n| vendor_name | string | Nama vendor pemilik katalog. |\n| register_date_start | date | Tanggal mulai pendaftaran |\n| register_date_end | date | Tanggal selesai pendaftaran |\n| created_at | timestamp | Waktu katalog dibuat |\n| updated_at | timestamp | Waktu terakhir katalog diupdate |\n| subfields_collection | array | List Sub Bidang yang didaftarkan pada katalog |\n\nDeskripsi Field `subfields_collection`:\n\n| Nama Field | Tipe Data | Deskripsi |\n| --- | --- | --- |\n| catalog_id | integer | ID katalog yang ditarik. |\n| field_id | integer | ID Bidang katalog. |\n| field_name | string | Nama Bidang katalog. |\n| subfield_id | integer | ID Sub Bidang katalog. |\n| subfield_name | string | Nama Sub Bidang katalog. |\n\n- **Gagal / Failed / Error**\n    \n\n``` json\n{\n    \"status\": \"error\",\n    \"message\": \"Gagal menarik data vendor, ID tidak valid\",\n    \"data\": {\n        \"errors\": {\n            \"id\": [\n                \"Gagal menarik data vendor, ID tidak valid\"\n            ]\n        }\n    }\n}\n\n ```\n\nJenis Error:\n\n| Kode | Message | Deskripsi |\n| --- | --- | --- |\n| 401 | Unauthorized | Token sudah kadaluwarsa atau otorisasi tidak berhasil. |\n| 422 | Unprocessable Content | Ada kesalahan dalam pengisian atau kegagalan validasi form/input. |\n\nPenjelasan response:\n\n| Nama Field | Tipe Data | Deskripsi |\n| --- | --- | --- |\n| status | string | Status request yang dikirim oleh server. Value dari field ini selalu diantara \"success\" atau \"error\". |\n| message | string | Pesan penjelasan secara literal dari server. |\n| data | object | Kumpulan data. (single) |\n\nDeskripsi Field `data`:\n\n| Nama Field | Tipe Data | Deskripsi |\n| --- | --- | --- |\n| errors | object | Kumpulan error yang dihasilkan dari validasi server/backend. |\n\nDeskripsi Field `errors`:\n\n| Nama Field | Tipe Data | Deskripsi |\n| --- | --- | --- |\n| nama_kolom | array | Kumpulan pesan error berbentuk \\`string\\` yang disimpan dalam array. |"
+							},
+							"response": [
+								{
+									"name": "success",
+									"originalRequest": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "application/json",
+												"type": "text"
+											}
+										],
+										"url": {
+											"raw": "{{base_url_api}}/admin/catalog/find?id=1",
+											"host": [
+												"{{base_url_api}}"
+											],
+											"path": [
+												"admin",
+												"catalog",
+												"find"
+											],
+											"query": [
+												{
+													"key": "id",
+													"value": "1"
+												}
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Host",
+											"value": "127.0.0.1:8000"
+										},
+										{
+											"key": "Connection",
+											"value": "close"
+										},
+										{
+											"key": "X-Powered-By",
+											"value": "PHP/8.4.10"
+										},
+										{
+											"key": "Cache-Control",
+											"value": "no-cache, private"
+										},
+										{
+											"key": "Date",
+											"value": "Sat, 12 Jul 2025 23:19:07 GMT"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										},
+										{
+											"key": "Access-Control-Allow-Origin",
+											"value": "*"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"status\": \"success\",\n    \"message\": \"Data berhasil ditarik\",\n    \"data\": {\n        \"id\": 1,\n        \"uuid\": \"fb4e9e47-11f3-4a77-8305-c999ed3f8496\",\n        \"title\": \"Perbaikan Jembatan Jalan Raya\",\n        \"number\": \"007/NXNX/POKN/2025\",\n        \"method\": \"Pelelangan dengan Pasca Kualifikasi\",\n        \"location\": \"Jakarta Selatan\",\n        \"qualification\": \"Semua Non-Konstruksi\",\n        \"value\": 500000000,\n        \"vendor_id\": 2,\n        \"vendor_name\": \"PT Jakarta Runnerindo\",\n        \"description\": \"adsad\",\n        \"register_date_start\": \"2025-08-01\",\n        \"register_date_end\": \"2025-08-31\",\n        \"created_at\": \"2025-07-12T23:13:23.000000Z\",\n        \"updated_at\": \"2025-07-12T23:13:23.000000Z\",\n        \"subfields_collection\": [\n            {\n                \"catalog_id\": 1,\n                \"field_id\": 1,\n                \"field_name\": \"Konstruksi - Jasa Pelaksana\",\n                \"subfield_id\": 1,\n                \"subfield_name\": \"Pelaksana konstruksi jalan raya dan rel kereta api\"\n            },\n            {\n                \"catalog_id\": 1,\n                \"field_id\": 1,\n                \"field_name\": \"Konstruksi - Jasa Pelaksana\",\n                \"subfield_id\": 2,\n                \"subfield_name\": \"Pelaksana konstruksi bangunan jenis rumah hunian\"\n            }\n        ]\n    }\n}"
+								},
+								{
+									"name": "failed",
+									"originalRequest": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "application/json",
+												"type": "text"
+											}
+										],
+										"url": {
+											"raw": "{{base_url_api}}/admin/catalog/find?id=612",
+											"host": [
+												"{{base_url_api}}"
+											],
+											"path": [
+												"admin",
+												"catalog",
+												"find"
+											],
+											"query": [
+												{
+													"key": "id",
+													"value": "612"
+												}
+											]
+										}
+									},
+									"status": "Unprocessable Content",
+									"code": 422,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Host",
+											"value": "127.0.0.1:8000"
+										},
+										{
+											"key": "Connection",
+											"value": "close"
+										},
+										{
+											"key": "X-Powered-By",
+											"value": "PHP/8.4.10"
+										},
+										{
+											"key": "Cache-Control",
+											"value": "no-cache, private"
+										},
+										{
+											"key": "Date",
+											"value": "Sat, 12 Jul 2025 23:19:17 GMT"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										},
+										{
+											"key": "Access-Control-Allow-Origin",
+											"value": "*"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"status\": \"error\",\n    \"message\": \"Gagal menarik data catalog, ID tidak valid\"\n}"
+								}
+							]
+						},
+						{
+							"name": "Create Catalog",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "Origin",
+										"value": "{{base_url}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"title\": \"Perbaikan Jembatan Jalan Raya\",\n    \"number\": \"007/NXNX/POKN/2025\",\n    \"method\": \"Pelelangan dengan Pasca Kualifikasi\",\n    \"location\": \"Jakarta Selatan\",\n    \"qualification\": \"Semua Non-Konstruksi\",\n    \"value\": 500000000,\n    \"vendor_id\": 2,\n    \"subfields\": [1, 2, 2, 1, 2],\n    \"description\": \"adsad\",\n    \"register_date_start\": \"2025-08-01\",\n    \"register_date_end\": \"2025-08-31\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": "{{base_url_api}}/admin/catalog/create",
+								"description": "## Create Catalog\n\nEndpoint untuk membuat katalog baru.\n\n### **Format Header**\n\n| Key | Value |\n| --- | --- |\n| Authorization | Bearer Token |\n\n### Format Request\n\n- **Method**: POST\n    \n- **Endpoint**: `/api/admin/catalog/create`\n    \n- **Content-Type**: application/json\n    \n- **Body Format:** raw,application/json\n    \n- **Request Body**: Body memiliki parameter sebagai berikut:\n    \n\n| Nama Field | Tipe Data | Wajib / Required | Deskripsi |\n| --- | --- | --- | --- |\n| title | string | Ya | Nama/Judul katalog. |\n| number | string | Ya | Nomor katalog. |\n| method | string | Ya | Metode penerimaan penyedia layanan. |\n| qualification | string | Ya | Kualifikasi penyedia layanan/jasa. |\n| location | string | Ya | Lokasi katalog. |\n| value | integer | Ya | Nilai HPS katalog. |\n| vendor_id | integer | Ya | ID Vendor pemilik katalog. |\n| register_date_start | date | Ya | Tanggal mulai pendaftaran |\n| register_date_end | date | Ya | Tanggal selesai pendaftaran |\n| subfields | array | Ya | List Sub Bidang yang didaftarkan pada katalog |\n| description | string | Tidak | Keterangan katalog. **(OPSIONAL)** |\n\n### **Contoh Response**\n\n- **Sukses / Success**\n    \n\n``` json\n{\n    \"status\": \"success\",\n    \"message\": \"Katalog  berhasil ditambahkan pada vendor PT Jakarta Runnerindo\",\n    \"data\": {\n        \"uuid\": \"5ebc224c-7dc4-45fd-b155-6532facef498\",\n        \"title\": \"Perbaikan Jembatan Jalan Raya\",\n        \"number\": \"007/NXNX/POKN/2025\",\n        \"method\": \"Pelelangan dengan Pasca Kualifikasi\",\n        \"location\": \"Jakarta Selatan\",\n        \"qualification\": \"Semua Jasa Konstruksi\",\n        \"value\": 500000000,\n        \"vendor_id\": 2,\n        \"description\": \"adsad\",\n        \"register_date_start\": \"2025-08-01\",\n        \"register_date_end\": \"2025-08-31\",\n        \"updated_at\": \"2025-07-12T23:14:03.000000Z\",\n        \"created_at\": \"2025-07-12T23:14:03.000000Z\",\n        \"id\": 2\n    }\n}\n\n ```\n\nPenjelasan response:\n\n| Nama Field | Tipe Data | Deskripsi |\n| --- | --- | --- |\n| status | string | Status request yang dikirim oleh server. Value dari field ini selalu diantara \"success\" atau \"error\". |\n| message | string | Pesan penjelasan secara literal dari server. |\n| data | array | Kumpulan data. (single) |\n\nDeskripsi Field `data`:\n\n| Nama Field | Tipe Data | Deskripsi |\n| --- | --- | --- |\n| id | integer | ID katalog. |\n| uuid | string | Unique ID katalog yang akan digunakan sebagai URI |\n| title | string | Nama/Judul katalog. |\n| number | string | Nomor katalog. |\n| method | string | Metode penerimaan penyedia layanan. |\n| qualification | string | Kualifikasi penyedia layanan/jasa. |\n| location | string | Lokasi katalog. |\n| value | integer | Nilai HPS katalog. |\n| vendor_id | integer | ID Vendor pemilik katalog. |\n| register_date_start | date | Tanggal mulai pendaftaran |\n| register_date_end | date | Tanggal selesai pendaftaran |\n| description | string | Keterangan katalog. |\n| created_at | timestamp | Waktu item dibuat. |\n| updated_at | timestamp | Waktu terakhir item diupdate. |\n\n- **Gagal / Failed / Error**\n    \n\n``` json\n{\n    \"status\": \"error\",\n    \"message\": \"Anda tidak memiliki izin untuk menambahkan katalog di vendor ini\",\n    \"data\": {\n        \"errors\": {\n            \"vendor\": [\n                \"Anda tidak memiliki izin untuk menambahkan katalog di vendor ini\"\n            ]\n        }\n    }\n}\n\n ```\n\nJenis Error:\n\n| Kode | Message | Deskripsi |\n| --- | --- | --- |\n| 401 | Unauthorized | Token sudah kadaluwarsa atau otorisasi tidak berhasil. |\n| 422 | Unprocessable Content | Ada kesalahan dalam pengisian atau kegagalan validasi form/input. |\n| 503 | Server Unavailable | Server sedang sibuk. |\n\nPenjelasan response:\n\n| Nama Field | Tipe Data | Deskripsi |\n| --- | --- | --- |\n| status | string | Status request yang dikirim oleh server. Value dari field ini selalu diantara \"success\" atau \"error\". |\n| message | string | Pesan penjelasan secara literal dari server. |\n| data | object | Kumpulan data. (single) |\n\nDeskripsi Field `data`:\n\n| Nama Field | Tipe Data | Deskripsi |\n| --- | --- | --- |\n| errors | object | Kumpulan error yang dihasilkan dari validasi server/backend. |\n\nDeskripsi Field `errors`:\n\n| Nama Field | Tipe Data | Deskripsi |\n| --- | --- | --- |\n| nama_kolom | array | Kumpulan pesan error berbentuk `string` yang disimpan dalam array. |"
+							},
+							"response": [
+								{
+									"name": "success",
+									"originalRequest": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "application/json",
+												"type": "text"
+											},
+											{
+												"key": "Origin",
+												"value": "{{base_url}}",
+												"type": "text"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"title\": \"Perbaikan Jembatan Jalan Raya\",\n    \"number\": \"007/NXNX/POKN/2025\",\n    \"method\": \"Pelelangan dengan Pasca Kualifikasi\",\n    \"location\": \"Jakarta Selatan\",\n    \"qualification\": \"Semua Jasa Konstruksi\",\n    \"value\": 500000000,\n    \"vendor_id\": 2,\n    \"subfields\": [1, 2],\n    \"description\": \"adsad\",\n    \"register_date_start\": \"2025-08-01\",\n    \"register_date_end\": \"2025-08-31\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": "{{base_url_api}}/admin/catalog/create"
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Host",
+											"value": "127.0.0.1:8000"
+										},
+										{
+											"key": "Connection",
+											"value": "close"
+										},
+										{
+											"key": "X-Powered-By",
+											"value": "PHP/8.4.10"
+										},
+										{
+											"key": "Cache-Control",
+											"value": "no-cache, private"
+										},
+										{
+											"key": "Date",
+											"value": "Sat, 12 Jul 2025 23:14:03 GMT"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										},
+										{
+											"key": "Access-Control-Allow-Origin",
+											"value": "*"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"status\": \"success\",\n    \"message\": \"Katalog  berhasil ditambahkan pada vendor PT Jakarta Runnerindo\",\n    \"data\": {\n        \"uuid\": \"5ebc224c-7dc4-45fd-b155-6532facef498\",\n        \"title\": \"Perbaikan Jembatan Jalan Raya\",\n        \"number\": \"007/NXNX/POKN/2025\",\n        \"method\": \"Pelelangan dengan Pasca Kualifikasi\",\n        \"location\": \"Jakarta Selatan\",\n        \"qualification\": \"Semua Jasa Konstruksi\",\n        \"value\": 500000000,\n        \"vendor_id\": 2,\n        \"description\": \"adsad\",\n        \"register_date_start\": \"2025-08-01\",\n        \"register_date_end\": \"2025-08-31\",\n        \"updated_at\": \"2025-07-12T23:14:03.000000Z\",\n        \"created_at\": \"2025-07-12T23:14:03.000000Z\",\n        \"id\": 2\n    }\n}"
+								},
+								{
+									"name": "failed",
+									"originalRequest": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "application/json",
+												"type": "text"
+											},
+											{
+												"key": "Origin",
+												"value": "{{base_url}}",
+												"type": "text"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"title\": \"Perbaikan Jembatan Jalan Raya\",\n    \"number\": \"007/NXNX/POKN/2025\",\n    \"method\": \"Pelelangan dengan Pasca Kualifikasi\",\n    \"location\": \"Jakarta Selatan\",\n    \"qualification\": \"Semua Non-Konstruksi\",\n    \"value\": 500000000,\n    \"vendor_id\": 4,\n    \"subfields\": [],\n    \"description\": \"adsad\",\n    \"register_date_start\": \"2025-08-01\",\n    \"register_date_end\": \"2025-08-31\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": "{{base_url_api}}/admin/catalog/create"
+									},
+									"status": "Forbidden",
+									"code": 403,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Host",
+											"value": "127.0.0.1:8000"
+										},
+										{
+											"key": "Connection",
+											"value": "close"
+										},
+										{
+											"key": "X-Powered-By",
+											"value": "PHP/8.4.10"
+										},
+										{
+											"key": "Cache-Control",
+											"value": "no-cache, private"
+										},
+										{
+											"key": "Date",
+											"value": "Sun, 13 Jul 2025 03:14:20 GMT"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										},
+										{
+											"key": "Access-Control-Allow-Origin",
+											"value": "*"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"status\": \"error\",\n    \"message\": \"Anda tidak memiliki izin untuk menambahkan katalog di vendor ini\",\n    \"data\": {\n        \"errors\": {\n            \"vendor\": [\n                \"Anda tidak memiliki izin untuk menambahkan katalog di vendor ini\"\n            ]\n        }\n    }\n}"
+								}
+							]
+						},
+						{
+							"name": "Update Catalog",
+							"request": {
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "Origin",
+										"value": "{{base_url}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"id\": 2,\n    \"title\": \"Perbaikan Jalan KM20\",\n    \"number\": \"007/NXNX/POKN/2025\",\n    \"method\": \"Pelelangan dengan Pasca Kualifikasi\",\n    \"location\": \"Jakarta Utara\",\n    \"qualification\": \"Semua Jasa Konstruksi\",\n    \"value\": 500000000,\n    \"subfields\": [1, 2, 3],\n    \"description\": \"adsad\",\n    \"register_date_start\": \"2025-08-01\",\n    \"register_date_end\": \"2025-08-31\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": "{{base_url_api}}/admin/catalog/update",
+								"description": "## Update Catalog\n\nEndpoint untuk memperbaharui data katalog.\n\n### **Format Header**\n\n| Key | Value |\n| --- | --- |\n| Authorization | Bearer Token |\n\n### Format Request\n\n- **Method**: POST\n    \n- **Endpoint**: `/api/admin/catalog/update`\n    \n- **Content-Type**: application/json\n    \n- **Body Format:** raw,application/json\n    \n- **Request Body**: Body memiliki parameter sebagai berikut:\n    \n\n| Nama Field | Tipe Data | Wajib / Required | Deskripsi |\n| --- | --- | --- | --- |\n| id | integer | Ya | ID katalog yang akan diupdate. |\n| title | string | Ya | Nama/Judul katalog. |\n| number | string | Ya | Nomor katalog. |\n| method | string | Ya | Metode penerimaan penyedia layanan. |\n| qualification | string | Ya | Kualifikasi penyedia layanan/jasa. |\n| location | string | Ya | Lokasi katalog. |\n| value | integer | Ya | Nilai HPS katalog. |\n| register_date_start | date | Ya | Tanggal mulai pendaftaran |\n| register_date_end | date | Ya | Tanggal selesai pendaftaran |\n| subfields | array | Ya | List Sub Bidang yang didaftarkan pada katalog |\n| description | string | Tidak | Keterangan katalog. **(OPSIONAL)** |\n\n### **Contoh Response**\n\n- **Sukses / Success**\n    \n\n``` json\n{\n    \"status\": \"success\",\n    \"message\": \"Katalog  berhasil diperbaharui oleh pemilik vendor PT Jakarta Runnerindo\",\n    \"data\": {\n        \"id\": 2,\n        \"uuid\": \"5ebc224c-7dc4-45fd-b155-6532facef498\",\n        \"title\": \"Perbaikan Jalan KM20\",\n        \"number\": \"007/NXNX/POKN/2025\",\n        \"method\": \"Pelelangan dengan Pasca Kualifikasi\",\n        \"location\": \"Jakarta Utara\",\n        \"qualification\": \"Semua Jasa Konstruksi\",\n        \"value\": 500000000,\n        \"vendor_id\": 2,\n        \"description\": \"adsad\",\n        \"register_date_start\": \"2025-08-01\",\n        \"register_date_end\": \"2025-08-31\",\n        \"created_at\": \"2025-07-12T23:14:03.000000Z\",\n        \"updated_at\": \"2025-07-12T23:17:17.000000Z\",\n        \"deleted_at\": null\n    }\n}\n\n ```\n\nPenjelasan response:\n\n| Nama Field | Tipe Data | Deskripsi |\n| --- | --- | --- |\n| status | string | Status request yang dikirim oleh server. Value dari field ini selalu diantara \"success\" atau \"error\". |\n| message | string | Pesan penjelasan secara literal dari server. |\n| data | array | Kumpulan data. (single) |\n\nDeskripsi Field `data`:\n\n| Nama Field | Tipe Data | Deskripsi |\n| --- | --- | --- |\n| id | integer | ID katalog. |\n| uuid | string | Unique ID katalog yang akan menjadi URI |\n| title | string | Nama/Judul katalog. |\n| number | string | Nomor katalog. |\n| method | string | Metode penerimaan penyedia layanan. |\n| qualification | string | Kualifikasi penyedia layanan/jasa. |\n| location | string | Lokasi katalog. |\n| value | integer | Nilai HPS katalog. |\n| vendor_id | integer | ID Vendor pemilik katalog. |\n| register_date_start | date | Tanggal mulai pendaftaran |\n| register_date_end | date | Tanggal selesai pendaftaran |\n| description | string | Keterangan katalog. |\n| created_at | timestamp | Waktu item dibuat. |\n| updated_at | timestamp | Waktu terakhir item diupdate. |\n| deleted_at | timestamp | Kolom soft delete. Bila value `null` maka item masih aktif |\n\n- **Gagal / Failed / Error**\n    \n\n``` json\n{\n    \"status\": \"error\",\n    \"message\": \"ID Katalog tidak ditemukan\",\n    \"data\": {\n        \"errors\": {\n            \"id\": \"ID Katalog tidak ditemukan\"\n        }\n    }\n}\n\n ```\n\nJenis Error:\n\n| Kode | Message | Deskripsi |\n| --- | --- | --- |\n| 401 | Unauthorized | Token sudah kadaluwarsa atau otorisasi tidak berhasil. |\n| 422 | Unprocessable Content | Ada kesalahan dalam pengisian atau kegagalan validasi form/input. |\n| 503 | Server Unavailable | Server sedang sibuk. |\n\nPenjelasan response:\n\n| Nama Field | Tipe Data | Deskripsi |\n| --- | --- | --- |\n| status | string | Status request yang dikirim oleh server. Value dari field ini selalu diantara \"success\" atau \"error\". |\n| message | string | Pesan penjelasan secara literal dari server. |\n| data | object | Kumpulan data. (single) |\n\nDeskripsi Field `data`:\n\n| Nama Field | Tipe Data | Deskripsi |\n| --- | --- | --- |\n| errors | object | Kumpulan error yang dihasilkan dari validasi server/backend. |\n\nDeskripsi Field `errors`:\n\n| Nama Field | Tipe Data | Deskripsi |\n| --- | --- | --- |\n| nama_kolom | array | Kumpulan pesan error berbentuk `string` yang disimpan dalam array. |"
+							},
+							"response": [
+								{
+									"name": "success",
+									"originalRequest": {
+										"method": "PATCH",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "application/json",
+												"type": "text"
+											},
+											{
+												"key": "Origin",
+												"value": "{{base_url}}",
+												"type": "text"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"id\": 2,\n    \"title\": \"Perbaikan Jalan KM20\",\n    \"number\": \"007/NXNX/POKN/2025\",\n    \"method\": \"Pelelangan dengan Pasca Kualifikasi\",\n    \"location\": \"Jakarta Utara\",\n    \"qualification\": \"Semua Jasa Konstruksi\",\n    \"value\": 500000000,\n    \"subfields\": [1, 2, 3],\n    \"description\": \"adsad\",\n    \"register_date_start\": \"2025-08-01\",\n    \"register_date_end\": \"2025-08-31\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": "{{base_url_api}}/admin/catalog/update"
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Host",
+											"value": "127.0.0.1:8000"
+										},
+										{
+											"key": "Connection",
+											"value": "close"
+										},
+										{
+											"key": "X-Powered-By",
+											"value": "PHP/8.4.10"
+										},
+										{
+											"key": "Cache-Control",
+											"value": "no-cache, private"
+										},
+										{
+											"key": "Date",
+											"value": "Sat, 12 Jul 2025 23:17:30 GMT"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										},
+										{
+											"key": "Access-Control-Allow-Origin",
+											"value": "*"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"status\": \"success\",\n    \"message\": \"Katalog  berhasil diperbaharui oleh pemilik vendor PT Jakarta Runnerindo\",\n    \"data\": {\n        \"id\": 2,\n        \"uuid\": \"5ebc224c-7dc4-45fd-b155-6532facef498\",\n        \"title\": \"Perbaikan Jalan KM20\",\n        \"number\": \"007/NXNX/POKN/2025\",\n        \"method\": \"Pelelangan dengan Pasca Kualifikasi\",\n        \"location\": \"Jakarta Utara\",\n        \"qualification\": \"Semua Jasa Konstruksi\",\n        \"value\": 500000000,\n        \"vendor_id\": 2,\n        \"description\": \"adsad\",\n        \"register_date_start\": \"2025-08-01\",\n        \"register_date_end\": \"2025-08-31\",\n        \"created_at\": \"2025-07-12T23:14:03.000000Z\",\n        \"updated_at\": \"2025-07-12T23:17:17.000000Z\",\n        \"deleted_at\": null\n    }\n}"
+								},
+								{
+									"name": "failed",
+									"originalRequest": {
+										"method": "PATCH",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "application/json",
+												"type": "text"
+											},
+											{
+												"key": "Origin",
+												"value": "{{base_url}}",
+												"type": "text"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"id\": 612,\n    \"title\": \"Perbaikan Jalan KM20\",\n    \"number\": \"007/NXNX/POKN/2025\",\n    \"method\": \"Pelelangan dengan Pasca Kualifikasi\",\n    \"location\": \"Jakarta Utara\",\n    \"qualification\": \"Semua Jasa Konstruksi\",\n    \"value\": 500000000,\n    \"subfields\": [1, 2, 3],\n    \"description\": \"adsad\",\n    \"register_date_start\": \"2025-08-01\",\n    \"register_date_end\": \"2025-08-31\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": "{{base_url_api}}/admin/catalog/update"
+									},
+									"status": "Unprocessable Content",
+									"code": 422,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Host",
+											"value": "127.0.0.1:8000"
+										},
+										{
+											"key": "Connection",
+											"value": "close"
+										},
+										{
+											"key": "X-Powered-By",
+											"value": "PHP/8.4.10"
+										},
+										{
+											"key": "Cache-Control",
+											"value": "no-cache, private"
+										},
+										{
+											"key": "Date",
+											"value": "Sat, 12 Jul 2025 23:18:52 GMT"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										},
+										{
+											"key": "Access-Control-Allow-Origin",
+											"value": "*"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"status\": \"error\",\n    \"message\": \"ID Katalog tidak ditemukan\"\n}"
+								}
+							]
+						},
+						{
+							"name": "Delete Catalog",
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "Origin",
+										"value": "{{base_url}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": []
+								},
+								"url": {
+									"raw": "{{base_url_api}}/admin/catalog/delete?id=2",
+									"host": [
+										"{{base_url_api}}"
+									],
+									"path": [
+										"admin",
+										"catalog",
+										"delete"
+									],
+									"query": [
+										{
+											"key": "id",
+											"value": "2"
+										}
+									]
+								},
+								"description": "## Delete Vendor\n\nEndpoint untuk menghapus katalog.\n\n### **Format Header**\n\n| Key | Value |\n| --- | --- |\n| Authorization | Bearer Token |\n\n### Format Request\n\n- **Method**: DELETE\n    \n- **Endpoint**: `/api/admin/catalog/delete`\n    \n- **Content-Type**: application/json\n    \n- **Body Format:** GET Query\n    \n- **Request Body**: GET Query memiliki parameter sebagai berikut:\n    \n\n| Nama Field | Tipe Data | Wajib / Required | Deskripsi |\n| --- | --- | --- | --- |\n| id | integer | Ya | ID katalog yang akan dihapus. |\n\n### **Contoh Response**\n\n- **Sukses / Success**\n    \n\n``` json\n{\n    \"status\": \"success\",\n    \"message\": \"Katalog Perbaikan Jalan KM20 berhasil dihapus\"\n}\n\n ```\n\nPenjelasan response:\n\n| Nama Field | Tipe Data | Deskripsi |\n| --- | --- | --- |\n| status | string | Status request yang dikirim oleh server. Value dari field ini selalu diantara \"success\" atau \"error\". |\n| message | string | Pesan penjelasan secara literal dari server. |\n\n- **Gagal / Failed / Error**\n    \n\n``` json\n{\n    \"status\": \"error\",\n    \"message\": \"Gagal menghapus katalog, ID tidak valid\",\n    \"data\": {\n        \"errors\": {\n            \"id\": [\n                \"Gagal menghapus katalog, ID tidak valid\"\n            ]\n        }\n    }\n}\n\n ```\n\nJenis Error:\n\n| Kode | Message | Deskripsi |\n| --- | --- | --- |\n| 401 | Unauthorized | Token sudah kadaluwarsa atau otorisasi tidak berhasil. |\n| 403 | Forbidden | Anda tidak diizinkan untuk menghapus item. |\n| 422 | Unprocessable Content | Ada kesalahan dalam pengisian atau kegagalan validasi form/input. |\n\nPenjelasan response:\n\n| Nama Field | Tipe Data | Deskripsi |\n| --- | --- | --- |\n| status | string | Status request yang dikirim oleh server. Value dari field ini selalu diantara \"success\" atau \"error\". |\n| message | string | Pesan penjelasan secara literal dari server. |\n| data | object | Kumpulan data. (single) |\n\nDeskripsi Field `data`:\n\n| Nama Field | Tipe Data | Deskripsi |\n| --- | --- | --- |\n| errors | object | Kumpulan error yang dihasilkan dari validasi server/backend. |\n\nDeskripsi Field `errors`:\n\n| Nama Field | Tipe Data | Deskripsi |\n| --- | --- | --- |\n| nama_kolom | array | Kumpulan pesan error berbentuk `string` yang disimpan dalam array. |"
+							},
+							"response": [
+								{
+									"name": "success",
+									"originalRequest": {
+										"method": "DELETE",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "application/json",
+												"type": "text"
+											},
+											{
+												"key": "Origin",
+												"value": "{{base_url}}",
+												"type": "text"
+											}
+										],
+										"body": {
+											"mode": "formdata",
+											"formdata": []
+										},
+										"url": {
+											"raw": "{{base_url_api}}/admin/catalog/delete?id=2",
+											"host": [
+												"{{base_url_api}}"
+											],
+											"path": [
+												"admin",
+												"catalog",
+												"delete"
+											],
+											"query": [
+												{
+													"key": "id",
+													"value": "2"
+												}
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Host",
+											"value": "127.0.0.1:8000"
+										},
+										{
+											"key": "Connection",
+											"value": "close"
+										},
+										{
+											"key": "X-Powered-By",
+											"value": "PHP/8.4.10"
+										},
+										{
+											"key": "Cache-Control",
+											"value": "no-cache, private"
+										},
+										{
+											"key": "Date",
+											"value": "Sat, 12 Jul 2025 23:22:36 GMT"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										},
+										{
+											"key": "Access-Control-Allow-Origin",
+											"value": "*"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"status\": \"success\",\n    \"message\": \"Katalog Perbaikan Jalan KM20 berhasil dihapus\"\n}"
+								},
+								{
+									"name": "failed",
+									"originalRequest": {
+										"method": "DELETE",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "application/json",
+												"type": "text"
+											},
+											{
+												"key": "Origin",
+												"value": "{{base_url}}",
+												"type": "text"
+											}
+										],
+										"body": {
+											"mode": "formdata",
+											"formdata": []
+										},
+										"url": {
+											"raw": "{{base_url_api}}/admin/catalog/delete?id=200",
+											"host": [
+												"{{base_url_api}}"
+											],
+											"path": [
+												"admin",
+												"catalog",
+												"delete"
+											],
+											"query": [
+												{
+													"key": "id",
+													"value": "200"
+												}
+											]
+										}
+									},
+									"_postman_previewlanguage": null,
+									"header": null,
+									"cookie": [],
+									"body": null
+								}
+							]
+						}
+					],
+					"description": "Folder ini berisikan endpoint untuk melihat, menambah, memperbaharui, dan menghapus katalog. Diantaranya:\n\n| Endpoint | Method | Deskripsi |\n| --- | --- | --- |\n| /api/admin/catalog | GET | Akses data katalog. (plural) |\n| /api/admin/catalog/find | GET | Akses data spesifik katalog. (singular) |\n| /api/admin/catalog/create | POST | Buat katalog baru. |\n| /api/admin/catalog/update | PATCH | Updata data katalog. |\n| /api/admin/catalog/delete | DELETE | Hapus katalog. |"
+				},
+				{
+					"name": "Field - Get All",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Origin",
+								"value": "{{base_url}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": []
+						},
+						"url": "{{base_url}}/api/admin/field",
+						"description": "## Get All Field\n\nEndpoint untuk mengakses semua data Bidang katalog.\n\n### **Format Header**\n\n| Key | Value |\n| --- | --- |\n| Authorization | Bearer Token |\n\n### Format Request\n\n- **Method**: GET\n    \n- **Endpoint**: `/api/admin/field`\n    \n- **Content-Type**: application/json\n    \n- **Body Format:** none\n    \n- **Request Body**: none\n    \n\n### **Contoh Response**\n\n- **Sukses / Success**\n    \n\n``` json\n{\n    \"status\": \"success\",\n    \"message\": \"Data berhasil ditarik\",\n    \"data\": [\n        {\n            \"id\": 1,\n            \"name\": \"Konstruksi - Jasa Pelaksana\"\n        },\n        {\n            \"id\": 2,\n            \"name\": \"Sistem Informasi - Jasa Pelaksana\"\n        }\n    ]\n}\n\n ```\n\nPenjelasan response:\n\n| Nama Field | Tipe Data | Deskripsi |\n| --- | --- | --- |\n| status | string | Status request yang dikirim oleh server. Value dari field ini selalu diantara \"success\" atau \"error\". |\n| message | string | Pesan penjelasan secara literal dari server. |\n| data | array | Kumpulan data. (multiple) |\n\nDeskripsi Field `data`:\n\n| Nama Field | Tipe Data | Deskripsi |\n| --- | --- | --- |\n| id | integer | ID bidang katalog yang baru dibuat. |\n| name | string | Nama bidang katalog. |\n\n- **Gagal / Failed / Error**\n    \n\n``` json\n{\n    \"status\": \"error\",\n    \"message\": \"Gagal menarik data bidang\",\n    \"data\": {\n        \"errors\": {\n            \"field\": [\n                \"Bidang tidak ditemukan.\"\n            ]\n        }\n    }\n}\n\n ```\n\nJenis Error:\n\n| Kode | Message | Deskripsi |\n| --- | --- | --- |\n| 401 | Unauthorized | Token sudah kadaluwarsa atau otorisasi tidak berhasil. |\n| 422 | Unprocessable Content | Ada kesalahan dalam pengisian atau kegagalan validasi form/input. |\n\nPenjelasan response:\n\n| Nama Field | Tipe Data | Deskripsi |\n| --- | --- | --- |\n| status | string | Status request yang dikirim oleh server. Value dari field ini selalu diantara \"success\" atau \"error\". |\n| message | string | Pesan penjelasan secara literal dari server. |\n| data | object | Kumpulan data. (single) |\n\nDeskripsi Field `data`:\n\n| Nama Field | Tipe Data | Deskripsi |\n| --- | --- | --- |\n| errors | object | Kumpulan error yang dihasilkan dari validasi server/backend. |\n\nDeskripsi Field `errors`:\n\n| Nama Field | Tipe Data | Deskripsi |\n| --- | --- | --- |\n| nama_kolom | array | Kumpulan pesan error berbentuk `string` yang disimpan dalam array. |"
+					},
+					"response": [
+						{
+							"name": "success",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "Origin",
+										"value": "{{base_url}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": []
+								},
+								"url": "{{base_url_api}}/admin/field"
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Host",
+									"value": "127.0.0.1:8000"
+								},
+								{
+									"key": "Connection",
+									"value": "close"
+								},
+								{
+									"key": "X-Powered-By",
+									"value": "PHP/8.4.10"
+								},
+								{
+									"key": "Cache-Control",
+									"value": "no-cache, private"
+								},
+								{
+									"key": "Date",
+									"value": "Sat, 12 Jul 2025 23:23:19 GMT"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": \"success\",\n    \"message\": \"Data berhasil ditarik\",\n    \"data\": [\n        {\n            \"id\": 1,\n            \"name\": \"Konstruksi - Jasa Pelaksana\"\n        },\n        {\n            \"id\": 2,\n            \"name\": \"Sistem Informasi - Jasa Pelaksana\"\n        }\n    ]\n}"
+						}
+					]
+				},
+				{
+					"name": "Subfield - Get All",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Origin",
+								"value": "{{base_url}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": []
+						},
+						"url": {
+							"raw": "{{base_url}}/api/admin/subfield?field_id=1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"admin",
+								"subfield"
+							],
+							"query": [
+								{
+									"key": "field_id",
+									"value": "1"
+								}
+							]
+						},
+						"description": "## Get All Subfield\n\nEndpoint untuk mengakses semua data Sub Bidang katalog. Bila `field_id` diisi maka hanya akan mengambil Sub Bidang berdasarkan ID Bidang tersebut. Bila tidak diisi maka akan mengambil semua Sub Bidang.\n\n### **Format Header**\n\n| Key | Value |\n| --- | --- |\n| Authorization | Bearer Token |\n\n### Format Request\n\n- **Method**: GET\n    \n- **Endpoint**: `/api/admin/subfield`\n    \n- **Content-Type**: application/json\n    \n- **Body Format:** GET Query\n    \n- **Request Body**: Query memiliki parameter sebagai berikut:\n    \n\n| Nama Field | Tipe Data | Wajib / Required | Deskripsi |\n| --- | --- | --- | --- |\n| field_id | integer | tidak | ID catalog yang datanya ingin diakses **(OPSIONAL)** |\n\n### **Contoh Response**\n\n- **Sukses / Success**\n    \n\n``` json\n{\n    \"status\": \"success\",\n    \"message\": \"Data berhasil ditarik\",\n    \"data\": [\n        {\n            \"id\": 1,\n            \"name\": \"Pelaksana konstruksi jalan raya dan rel kereta api\",\n            \"field_id\": 1,\n            \"field_name\": \"Konstruksi - Jasa Pelaksana\"\n        },\n        {\n            \"id\": 2,\n            \"name\": \"Pelaksana konstruksi bangunan jenis rumah hunian\",\n            \"field_id\": 1,\n            \"field_name\": \"Konstruksi - Jasa Pelaksana\"\n        }\n    ]\n}\n\n ```\n\nPenjelasan response:\n\n| Nama Field | Tipe Data | Deskripsi |\n| --- | --- | --- |\n| status | string | Status request yang dikirim oleh server. Value dari field ini selalu diantara \"success\" atau \"error\". |\n| message | string | Pesan penjelasan secara literal dari server. |\n| data | array | Kumpulan data. (multiple) |\n\nDeskripsi Field `data`:\n\n| Nama Field | Tipe Data | Deskripsi |\n| --- | --- | --- |\n| id | integer | ID sub bidang katalog. |\n| name | string | Nama sub bidang katalog. |\n| field_id | integer | ID bidang katalog |\n| field_name | string | Nama bidang katalog |\n\n- **Gagal / Failed / Error**\n    \n\n``` json\n{\n    \"status\": \"error\",\n    \"message\": \"Gagal menarik data sub bidang\",\n    \"data\": {\n        \"errors\": {\n            \"field\": [\n                \"Sub Bidang tidak ditemukan.\"\n            ]\n        }\n    }\n}\n\n ```\n\nJenis Error:\n\n| Kode | Message | Deskripsi |\n| --- | --- | --- |\n| 401 | Unauthorized | Token sudah kadaluwarsa atau otorisasi tidak berhasil. |\n| 422 | Unprocessable Content | Ada kesalahan dalam pengisian atau kegagalan validasi form/input. |\n\nPenjelasan response:\n\n| Nama Field | Tipe Data | Deskripsi |\n| --- | --- | --- |\n| status | string | Status request yang dikirim oleh server. Value dari field ini selalu diantara \"success\" atau \"error\". |\n| message | string | Pesan penjelasan secara literal dari server. |\n| data | object | Kumpulan data. (single) |\n\nDeskripsi Field `data`:\n\n| Nama Field | Tipe Data | Deskripsi |\n| --- | --- | --- |\n| errors | object | Kumpulan error yang dihasilkan dari validasi server/backend. |\n\nDeskripsi Field `errors`:\n\n| Nama Field | Tipe Data | Deskripsi |\n| --- | --- | --- |\n| nama_kolom | array | Kumpulan pesan error berbentuk `string` yang disimpan dalam array. |"
+					},
+					"response": [
+						{
+							"name": "success - all",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "Origin",
+										"value": "{{base_url}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": []
+								},
+								"url": {
+									"raw": "{{base_url}}/api/admin/subfield",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"admin",
+										"subfield"
+									],
+									"query": [
+										{
+											"key": "field_id",
+											"value": "1",
+											"disabled": true
+										}
+									]
+								}
+							},
+							"_postman_previewlanguage": null,
+							"header": null,
+							"cookie": [],
+							"body": null
+						},
+						{
+							"name": "success - specific",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "Origin",
+										"value": "{{base_url}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": []
+								},
+								"url": {
+									"raw": "{{base_url}}/api/admin/subfield?field_id=1",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"admin",
+										"subfield"
+									],
+									"query": [
+										{
+											"key": "field_id",
+											"value": "1"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Host",
+									"value": "127.0.0.1:8000"
+								},
+								{
+									"key": "Connection",
+									"value": "close"
+								},
+								{
+									"key": "X-Powered-By",
+									"value": "PHP/8.4.10"
+								},
+								{
+									"key": "Cache-Control",
+									"value": "no-cache, private"
+								},
+								{
+									"key": "Date",
+									"value": "Sun, 13 Jul 2025 03:38:26 GMT"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": \"success\",\n    \"message\": \"Data berhasil ditarik\",\n    \"data\": [\n        {\n            \"id\": 1,\n            \"name\": \"Pelaksana konstruksi jalan raya dan rel kereta api\",\n            \"field_name\": \"Konstruksi - Jasa Pelaksana\"\n        },\n        {\n            \"id\": 2,\n            \"name\": \"Pelaksana konstruksi bangunan jenis rumah hunian\",\n            \"field_name\": \"Konstruksi - Jasa Pelaksana\"\n        }\n    ]\n}"
+						}
+					]
+				}
+			],
+			"description": "Kumpulan endpoint yang diproteksi oleh LaraveL Sanctum token. Di antaranya adalah:\n\n| Endpoint | Method | Deskripsi |\n| --- | --- | --- |\n| /api/admin/vendor | GET | Akses data vendor. (plural) |\n| /api/admin/vendor/find | GET | Akses data spesifik vendor. (singular) |\n| /api/admin/vendor/create | POST | Buat vendor baru. |\n| /api/admin/vendor/update | PATCH | Update data vendor. |\n| /api/admin/vendor/delete | DELETE | Hapus vendor. |\n| /api/admin/catalog | GET | Akses data katalog. (plural) |\n| /api/admin/catalog/find | GET | Akses data spesifik katalog. (singular) |\n| /api/admin/catalog/create | POST | Buat katalog baru. |\n| /api/admin/catalog/update | PATCH | Updata data katalog. |\n| /api/admin/catalog/delete | DELETE | Hapus katalog. |\n| /api/admin/field | GET | Akses data bidang dalam e-procurement. |\n| /api/admin/subfield | GET | Akses data sub bidang dalam e-procurement. |"
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": {
+			"token": "{{access_token}}"
+		}
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "base_url_api",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "access_token",
+			"value": "",
+			"type": "string"
+		}
+	]
+}
