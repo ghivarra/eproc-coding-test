@@ -23,6 +23,11 @@ class CatalogController extends Controller
         $vendor      = Vendor::find($vendorID);
         $currentUser = auth('sanctum')->user();
 
+        if (empty($vendor))
+        {
+            return false;
+        }
+
         // set
         $this->usedVendor = $vendor;
 
@@ -68,10 +73,18 @@ class CatalogController extends Controller
         // validasi vendor dan user
         if (!$this->validateVendorAndUser($request->input('vendor_id')))
         {
+            $name = isset($this->usedVendor) ? $this->usedVendor->name : 'ini';
+
             // return error response
+            $message = "Anda tidak memiliki izin untuk menambahkan katalog di vendor {$name}";
             return response()->json([
                 'status'  => 'error',
-                'message' => "Anda tidak memiliki izin untuk menambahkan katalog di vendor {$this->usedVendor->name}",
+                'message' => $message,
+                'data'    => [
+                    'errors' => [ 
+                        'vendor' => [ $message ]
+                    ]
+                ]
             ], 403);
         }
 
@@ -110,9 +123,15 @@ class CatalogController extends Controller
         if (!$isSaved)
         {
             // return error response
+            $message = 'Server sedang sibuk, silahkan coba lagi';
             return response()->json([
                 'status'  => 'error',
                 'message' => 'Server sedang sibuk, silahkan coba lagi',
+                'data'    => [
+                    'errors' => [
+                        'server' => [ $message ]
+                    ]
+                ]
             ], 503);
         }
 
@@ -158,9 +177,15 @@ class CatalogController extends Controller
         if (!isset($catalog->title))
         {
             // id not valid
+            $message = 'Gagal menghapus katalog, ID tidak valid';
             return response()->json([
                 'status'  => 'error',
-                'message' => 'Gagal menghapus katalog, ID tidak valid',
+                'message' => $message,
+                'data'    => [
+                    'errors' => [
+                        'id' => [ $message ]
+                    ]
+                ]
             ], 422);
         }
 
@@ -168,9 +193,15 @@ class CatalogController extends Controller
         if (!$this->validateVendorAndUser($catalog->vendor_id))
         {
             // return error response
+            $message = "Anda tidak memiliki izin untuk menghapus katalog milik vendor {$this->usedVendor->name}";
             return response()->json([
                 'status'  => 'error',
-                'message' => "Anda tidak memiliki izin untuk menghapus katalog milik vendor {$this->usedVendor->name}",
+                'message' => $message,
+                'data'    => [
+                    'errors' => [
+                        'id' => [ $message ]
+                    ]
+                ]
             ], 403);
         }
 
@@ -222,9 +253,15 @@ class CatalogController extends Controller
         if (!isset($catalog->title))
         {
             // id not valid
+            $message = 'Gagal menarik data catalog, ID tidak valid';
             return response()->json([
                 'status'  => 'error',
-                'message' => 'Gagal menarik data catalog, ID tidak valid',
+                'message' => $message,
+                'data'    => [
+                    'errors' => [
+                        'id' => [ $message ]
+                    ]
+                ]
             ], 422);
         }
 
@@ -286,7 +323,7 @@ class CatalogController extends Controller
                 'data'    => [
                     'errors' => $validation->errors()
                 ]
-            ], 400);
+            ], 422);
         }
 
         // get data
@@ -344,9 +381,13 @@ class CatalogController extends Controller
         {
             // id not valid
             return response()->json([
-                'status'  => 'error',
+                'status'  => 'success',
                 'message' => 'Katalog tidak ditemukan',
-                'data'    => [],
+                'data'    => [
+                    'total'         => $totalData,
+                    'totalFiltered' => $totalFilteredData,
+                    'data'          => []
+                ],
             ], 200);
         }
 
@@ -414,9 +455,15 @@ class CatalogController extends Controller
 
         if (empty($catalog) || !isset($catalog->vendor_id))
         {
+            $message = 'ID Katalog tidak ditemukan';
             return response()->json([
                 'status'  => 'error',
-                'message' => 'ID Katalog tidak ditemukan',
+                'message' => $message,
+                'data'    => [
+                    'errors' => [
+                        'id' => $message,
+                    ]
+                ]
             ], 422);
         }
 
@@ -453,9 +500,15 @@ class CatalogController extends Controller
         if (!$this->validateVendorAndUser($catalog->vendor_id))
         {
             // return error response
+            $message = "Anda tidak memiliki izin untuk menambahkan katalog milik vendor {$this->usedVendor->name}";
             return response()->json([
                 'status'  => 'error',
-                'message' => "Anda tidak memiliki izin untuk menambahkan katalog milik vendor {$this->usedVendor->name}",
+                'message' => $message,
+                'data'    => [
+                    'errors' => [ 
+                        'id' => [ $message ]
+                     ]
+                ]
             ], 403);
         }
 
@@ -492,9 +545,15 @@ class CatalogController extends Controller
         if (!$isSaved)
         {
             // return error response
+            $message = 'Server sedang sibuk, silahkan coba lagi';
             return response()->json([
                 'status'  => 'error',
-                'message' => 'Server sedang sibuk, silahkan coba lagi',
+                'message' => $message,
+                'data'    => [
+                    'errors' => [ 
+                        'server' => [ $message ]
+                     ]
+                ]
             ], 503);
         }
 

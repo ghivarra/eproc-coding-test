@@ -67,9 +67,15 @@ class VendorController extends Controller
         if (!$isSaved)
         {
             // return error response
+            $message = 'Server sedang sibuk, silahkan coba lagi';
             return response()->json([
                 'status'  => 'error',
-                'message' => 'Server sedang sibuk, silahkan coba lagi',
+                'message' => $message,
+                'errors'  => [
+                    'errors' => [
+                        'server' => [ $message ]
+                    ]
+                ]
             ], 503);
         }
 
@@ -94,9 +100,15 @@ class VendorController extends Controller
         if (!isset($vendor->name))
         {
             // id not valid
+            $message = 'Gagal menghapus vendor, ID tidak valid';
             return response()->json([
                 'status'  => 'error',
-                'message' => 'Gagal menghapus vendor, ID tidak valid',
+                'message' => $message,
+                'data'    => [
+                    'errors' => [
+                        'id' => [ $message ]
+                    ]
+                ]
             ], 422);
         }
 
@@ -105,9 +117,15 @@ class VendorController extends Controller
 
         if ($vendor->user_id !== $user->id)
         {
+            $message = "Anda tidak memiliki izin untuk menghapus vendor {$vendor->name}";
             return response()->json([
                 'status'  => 'error',
-                'message' => "Anda tidak memiliki izin untuk menghapus vendor {$vendor->name}",
+                'message' => $message,
+                'data'    => [
+                    'errors' => [
+                        'id' => [ $message ]
+                    ]
+                ]
             ], 403);
         }
 
@@ -144,9 +162,15 @@ class VendorController extends Controller
         if (!isset($vendor->name))
         {
             // id not valid
+            $message = 'Gagal menarik data vendor, ID tidak valid';
             return response()->json([
                 'status'  => 'error',
-                'message' => 'Gagal menarik data vendor, ID tidak valid',
+                'message' => $message,
+                'data'    => [
+                    'errors' => [
+                        'id' => [ $message ]
+                    ]
+                ]
             ], 422);
         }
 
@@ -183,7 +207,7 @@ class VendorController extends Controller
                 'data'    => [
                     'errors' => $validation->errors()
                 ]
-            ], 400);
+            ], 422);
         }
 
         // get data
@@ -215,11 +239,14 @@ class VendorController extends Controller
         // if not found
         if (empty($data))
         {
-            // id not valid
             return response()->json([
-                'status'  => 'error',
+                'status'  => 'success',
                 'message' => 'Vendor tidak ditemukan',
-                'data'    => [],
+                'data'    => [
+                    'total'         => $totalData,
+                    'totalFiltered' => $totalFilteredData,
+                    'data'          => [],
+                ],
             ], 200);
         }
 
@@ -292,9 +319,15 @@ class VendorController extends Controller
 
         if ($vendor->user_id !== $user->id)
         {
+            $message = "Anda tidak memiliki izin untuk mengupdate data vendor {$vendor->name}";
             return response()->json([
                 'status'  => 'error',
-                'message' => "Anda tidak memiliki izin untuk mengupdate data vendor {$vendor->name}",
+                'message' => $message,
+                'data'    => [
+                    'errors' => [
+                        'id' => [ $message ]
+                    ]
+                ]
             ], 403);
         }
 
@@ -307,9 +340,15 @@ class VendorController extends Controller
         if (!$isSaved)
         {
             // return error response
+            $message = 'Server sedang sibuk, silahkan coba lagi';
             return response()->json([
                 'status'  => 'error',
-                'message' => 'Server sedang sibuk, silahkan coba lagi',
+                'message' => $message,
+                'data'    => [
+                    'errors' => [
+                        'server' => [ $message ],
+                    ]
+                ]
             ], 503);
         }
 

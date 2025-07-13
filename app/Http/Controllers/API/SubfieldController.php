@@ -39,7 +39,7 @@ class SubfieldController extends Controller
         $input = $validation->validated();
 
         // get all
-        $orm = Subfield::select('subfields.id', 'subfields.name', 'fields.name as field_name')
+        $orm = Subfield::select('subfields.id', 'subfields.name', 'field_id', 'fields.name as field_name')
                        ->join('fields', 'field_id', '=', 'fields.id');
 
         if (isset($input['field_id']))

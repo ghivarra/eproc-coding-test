@@ -44,9 +44,16 @@ class AuthController extends Controller
         if ($validation->fails())
         {
             // return error response
+            $message = 'Akun email dan password tidak cocok';
             return response()->json([
                 'status'  => 'error',
-                'message' => 'Akun email dan password tidak cocok',
+                'message' => $message,
+                'data'    => [
+                    'errors' => [
+                        'email'    => [ $message ],
+                        'password' => [ $message ],
+                    ]
+                ]
             ], 401);
         }
 
@@ -60,9 +67,16 @@ class AuthController extends Controller
         if (!Hash::check($input['password'], $user->password))
         {
             // return error response
+            $message = 'Akun email dan password tidak cocok';
             return response()->json([
                 'status'  => 'error',
-                'message' => 'Akun email dan password tidak cocok',
+                'message' => $message,
+                'data'    => [
+                    'errors' => [
+                        'email'    => [ $message ],
+                        'password' => [ $message ],
+                    ]
+                ]
             ], 401);
         }
 
@@ -91,9 +105,15 @@ class AuthController extends Controller
         if (is_null($user))
         {
             // return error response
+            $message = 'Anda belum melakukan autentikasi login';
             return response()->json([
                 'status'  => 'error',
-                'message' => 'Anda belum melakukan autentikasi login',
+                'message' => $message,
+                'data'    => [
+                    'errors' => [
+                        'field' => [ $message ]
+                    ]
+                ]
             ], 401);
         }
 
@@ -153,9 +173,15 @@ class AuthController extends Controller
         if (!$isSuccess)
         {
             // return error response
+            $message = 'Server sedang sibuk, silahkan coba lagi';
             return response()->json([
                 'status'  => 'error',
-                'message' => 'Server sedang sibuk, silahkan coba lagi',
+                'message' => $message,
+                'data'    => [
+                    'errors' => [
+                        'server' => [ $message ],
+                    ]
+                ]
             ], 503);
         }
 
